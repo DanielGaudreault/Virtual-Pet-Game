@@ -1,365 +1,146 @@
-// Add this code inside your existing <script> tag, replacing the placeholder game functions
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Pet Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Login Section -->
+        <div id="loginSection" class="section">
+            <h1>Welcome to Virtual Pet Game</h1>
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Username" required>
+                <div class="password-container">
+                    <input type="password" id="password" placeholder="Password" required>
+                    <i class="fas fa-eye toggle-password"></i>
+                </div>
+                <button type="submit">Login</button>
+                <button type="button" onclick="showSection('register')">Register</button>
+            </form>
+        </div>
 
-// Initialize game
-function initializeGame() {
-    // Set up initial pet if none exists
-    if (!gameState.currentPet && gameState.pets.length > 0) {
-        gameState.currentPet = gameState.pets[0];
-    } else if (!gameState.currentPet) {
-        // Create default pet if none exists
-        gameState.currentPet = {
-            id: 'pet_' + Date.now(),
-            name: "Whiskers",
-            type: "cat",
-            emoji: "🐱",
-            age: 3,
-            level: 1,
-            experience: 150,
-            maxExperience: 200,
-            health: 85,
-            hunger: 60,
-            happiness: 75,
-            energy: 90,
-            cleanliness: 70,
-            mood: "happy",
-            traits: ["playful", "curious"],
-            lastFed: Date.now() - 2 * 60 * 60 * 1000,
-            lastPlayed: Date.now() - 1 * 60 * 60 * 1000,
-            lastCleaned: Date.now() - 4 * 60 * 60 * 1000,
-            lastSlept: Date.now() - 8 * 60 * 60 * 1000
-        };
-        gameState.pets.push(gameState.currentPet);
-    }
-    
-    updateUI();
-}
+        <!-- Register Section -->
+        <div id="registerSection" class="section" style="display: none;">
+            <h1>Register</h1>
+            <form id="registerForm">
+                <input type="text" id="newUsername" placeholder="Username" required>
+                <div class="password-container">
+                    <input type="password" id="newPassword" placeholder="Password" required>
+                    <i class="fas fa-eye toggle-password"></i>
+                </div>
+                <button type="submit">Register</button>
+                <button type="button" onclick="showSection('login')">Back to Login</button>
+            </form>
+        </div>
 
-// Pet care functions
-function feedPet() {
-    if (gameState.currentPet.hunger < 100) {
-        gameState.currentPet.hunger = Math.min(100, gameState.currentPet.hunger + 25);
-        gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 10);
-        gameState.currentPet.lastFed = Date.now();
-        gainExperience(5);
-        showFloatingHearts();
-        showNotification(gameState.currentPet.name + ' enjoyed the meal!', 'success');
-        updatePetMood();
-        updateUI();
-        saveGameState();
-    } else {
-        showNotification(gameState.currentPet.name + ' is not hungry right now', 'info');
-    }
-}
+        <!-- Main Game Section -->
+        <div id="mainSection" class="section" style="display: none;">
+            <div id="dayNightCycle" class="day-night-cycle day">
+                <div id="weatherEffect" class="weather-effect"></div>
+                <div class="weather-display">
+                    <i id="weatherIcon" class="fas fa-sun"></i>
+                    <span id="weatherText">Sunny</span>
+                </div>
+                <div class="pet-display">
+                    <h2 id="currentPetName">Whiskers</h2>
+                    <div id="currentPetAvatar" class="pet-avatar">🐱</div>
+                    <span id="currentPetMood">😊</span>
+                    <p id="currentPetAge">Age: 3 months</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <span>Health</span>
+                        <div class="progress-bar"><div id="healthBar" class="progress"></div></div>
+                        <span id="healthValue">85/100</span>
+                    </div>
+                    <div class="stat">
+                        <span>Hunger</span>
+                        <div class="progress-bar"><div id="hungerBar" class="progress"></div></div>
+                        <span id="hungerValue">60/100</span>
+                    </div>
+                    <div class="stat">
+                        <span>Happiness</span>
+                        <div class="progress-bar"><div id="happinessBar" class="progress"></div></div>
+                        <span id="happinessValue">75/100</span>
+                    </div>
+                    <div class="stat">
+                        <span>Energy</span>
+                        <div class="progress-bar"><div id="energyBar" class="progress"></div></div>
+                        <span id="energyValue">90/100</span>
+                    </div>
+                    <div class="stat">
+                        <span>Cleanliness</span>
+                        <div class="progress-bar"><div id="cleanlinessBar" class="progress"></div></div>
+                        <span id="cleanlinessValue">70/100</span>
+                    </div>
+                    <div class="stat">
+                        <span>Experience</span>
+                        <div class="progress-bar"><div id="experienceBar" class="progress"></div></div>
+                        <span id="experienceValue">150/200</span>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <button onclick="feedPet()">Feed</button>
+                    <button onclick="playWithPet()">Play</button>
+                    <button onclick="cleanPet()">Clean</button>
+                    <button onclick="sleepPet()">Sleep</button>
+                    <button onclick="takeToVet()">Vet</button>
+                </div>
+                <div class="user-stats">
+                    <span>Coins: <span id="userCoins">100</span></span>
+                    <span>Level: <span id="userLevel">1</span></span>
+                </div>
+                <div class="navigation">
+                    <button class="navigation-tab active" data-section="main">Main</button>
+                    <button class="navigation-tab" data-section="pets">Pets</button>
+                    <button class="navigation-tab" data-section="house">House</button>
+                    <button class="navigation-tab" data-section="shop">Shop</button>
+                    <button class="navigation-tab" data-section="stats">Stats</button>
+                    <button onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
 
-function playWithPet() {
-    if (gameState.currentPet.energy > 20) {
-        gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 20);
-        gameState.currentPet.energy = Math.max(0, gameState.currentPet.energy - 20);
-        gameState.currentPet.lastPlayed = Date.now();
-        gainExperience(10);
-        showFloatingHearts();
-        showNotification(gameState.currentPet.name + ' had a great time playing!', 'success');
-        updatePetMood();
-        updateUI();
-        saveGameState();
-    } else {
-        showNotification(gameState.currentPet.name + ' is too tired to play', 'info');
-    }
-}
+        <!-- Pets Section -->
+        <div id="petsSection" class="section" style="display: none;">
+            <h1>Your Pets</h1>
+            <div id="petCollection"></div>
+            <button onclick="createNewPet()">Create New Pet</button>
+        </div>
 
-function cleanPet() {
-    if (gameState.currentPet.cleanliness < 100) {
-        gameState.currentPet.cleanliness = Math.min(100, gameState.currentPet.cleanliness + 30);
-        gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 5);
-        gameState.currentPet.lastCleaned = Date.now();
-        gainExperience(5);
-        showNotification(gameState.currentPet.name + ' feels fresh and clean!', 'success');
-        updatePetMood();
-        updateUI();
-        saveGameState();
-    } else {
-        showNotification(gameState.currentPet.name + ' is already clean', 'info');
-    }
-}
+        <!-- House Section -->
+        <div id="houseSection" class="section" style="display: none;">
+            <h1>House Designer</h1>
+            <div id="houseDesigner">
+                <canvas id="houseCanvas" width="400" height="300"></canvas>
+                <div class="house-controls">
+                    <button onclick="addFurniture('bed')">Add Bed</button>
+                    <button onclick="addFurniture('lamp')">Add Lamp</button>
+                    <button onclick="clearHouse()">Clear House</button>
+                </div>
+            </div>
+        </div>
 
-function sleepPet() {
-    if (gameState.currentPet.energy < 100) {
-        gameState.currentPet.energy = Math.min(100, gameState.currentPet.energy + 40);
-        gameState.currentPet.lastSlept = Date.now();
-        showNotification(gameState.currentPet.name + ' had a good nap!', 'success');
-        updatePetMood();
-        updateUI();
-        saveGameState();
-    } else {
-        showNotification(gameState.currentPet.name + ' is not tired right now', 'info');
-    }
-}
+        <!-- Shop Section -->
+        <div id="shopSection" class="section" style="display: none;">
+            <h1>Shop</h1>
+            <div id="shopItems"></div>
+        </div>
 
-function takeToVet() {
-    if (gameState.coins >= 50) {
-        gameState.coins -= 50;
-        gameState.currentPet.health = 100;
-        showNotification('Veterinary visit complete! ' + gameState.currentPet.name + ' is in perfect health!', 'success');
-        updateUI();
-        saveGameState();
-    } else {
-        showNotification('You need 50 coins for a vet visit', 'error');
-    }
-}
+        <!-- Stats Section -->
+        <div id="statsSection" class="section" style="display: none;">
+            <h1>Statistics</h1>
+            <canvas id="statsChart" width="400" height="200"></canvas>
+        </div>
 
-// Game mechanics
-function gainExperience(amount) {
-    gameState.currentPet.experience += amount;
-    if (gameState.currentPet.experience >= gameState.currentPet.maxExperience) {
-        levelUp();
-    }
-    updateUI();
-}
-
-function levelUp() {
-    gameState.currentPet.level++;
-    gameState.currentPet.experience = 0;
-    gameState.currentPet.maxExperience = gameState.currentPet.level * 100;
-    gameState.coins += gameState.currentPet.level * 50;
-    showNotification(gameState.currentPet.name + ' leveled up! Level ' + gameState.currentPet.level, 'success');
-    updateUI();
-    saveGameState();
-}
-
-function updatePetMood() {
-    const avg = (gameState.currentPet.health + gameState.currentPet.hunger + 
-                gameState.currentPet.happiness + gameState.currentPet.energy + 
-                gameState.currentPet.cleanliness) / 5;
-    
-    if (avg >= 80) {
-        gameState.currentPet.mood = 'happy';
-        document.getElementById('currentPetMood').textContent = '😊';
-    } else if (avg >= 60) {
-        gameState.currentPet.mood = 'neutral';
-        document.getElementById('currentPetMood').textContent = '😐';
-    } else if (avg >= 40) {
-        gameState.currentPet.mood = 'sad';
-        document.getElementById('currentPetMood').textContent = '😢';
-    } else {
-        gameState.currentPet.mood = 'sick';
-        document.getElementById('currentPetMood').textContent = '😷';
-    }
-}
-
-function showFloatingHearts() {
-    const avatar = document.getElementById('currentPetAvatar');
-    const hearts = document.createElement('div');
-    hearts.className = 'floating-hearts';
-    hearts.textContent = '💕';
-    hearts.style.position = 'absolute';
-    hearts.style.left = Math.random() * 100 + 'px';
-    hearts.style.top = Math.random() * 100 + 'px';
-    avatar.appendChild(hearts);
-    
-    setTimeout(() => {
-        if (hearts.parentNode) {
-            hearts.parentNode.removeChild(hearts);
-        }
-    }, 2000);
-}
-
-// UI update functions
-function updateUI() {
-    if (!gameState.currentPet) return;
-    
-    // Update pet display
-    document.getElementById('currentPetName').textContent = gameState.currentPet.name;
-    document.getElementById('currentPetAvatar').textContent = gameState.currentPet.emoji;
-    document.getElementById('currentPetAge').textContent = 'Age: ' + gameState.currentPet.age + ' months';
-    
-    // Update status bars
-    updateStatusBar('health', gameState.currentPet.health);
-    updateStatusBar('hunger', gameState.currentPet.hunger);
-    updateStatusBar('happiness', gameState.currentPet.happiness);
-    updateStatusBar('energy', gameState.currentPet.energy);
-    updateStatusBar('cleanliness', gameState.currentPet.cleanliness);
-    
-    // Update experience
-    const expPercent = (gameState.currentPet.experience / gameState.currentPet.maxExperience) * 100;
-    document.getElementById('experienceBar').style.width = expPercent + '%';
-    document.getElementById('experienceValue').textContent = 
-        gameState.currentPet.experience + '/' + gameState.currentPet.maxExperience;
-    
-    // Update user stats
-    document.getElementById('userCoins').textContent = gameState.coins;
-    document.getElementById('userLevel').textContent = gameState.currentPet.level;
-}
-
-function updateStatusBar(stat, value) {
-    const bar = document.getElementById(stat + 'Bar');
-    const valueSpan = document.getElementById(stat + 'Value');
-    if (bar && valueSpan) {
-        bar.style.width = value + '%';
-        valueSpan.textContent = value + '/100';
-    }
-}
-
-// Navigation functions
-function showSection(sectionName) {
-    // Hide all sections
-    const sections = document.querySelectorAll('.section');
-    sections.forEach(section => section.style.display = 'none');
-    
-    // Show selected section
-    const sectionToShow = document.getElementById(sectionName + 'Section');
-    if (sectionToShow) {
-        sectionToShow.style.display = 'block';
-    }
-    
-    // Update navigation tabs
-    const tabs = document.querySelectorAll('.navigation-tab');
-    tabs.forEach(tab => tab.classList.remove('active'));
-    event.target.classList.add('active');
-    
-    // Load section-specific content
-    switch(sectionName) {
-        case 'pets':
-            loadPetCollection();
-            break;
-        case 'house':
-            loadHouseDesigner();
-            break;
-        case 'shop':
-            loadShop();
-            break;
-        case 'stats':
-            updateCharts();
-            break;
-    }
-}
-
-// Initialize button event listeners
-function setupButtonListeners() {
-    // Quick Actions
-    document.querySelectorAll('[onclick="feedPet()"]').forEach(btn => {
-        btn.onclick = feedPet;
-    });
-    document.querySelectorAll('[onclick="playWithPet()"]').forEach(btn => {
-        btn.onclick = playWithPet;
-    });
-    document.querySelectorAll('[onclick="cleanPet()"]').forEach(btn => {
-        btn.onclick = cleanPet;
-    });
-    document.querySelectorAll('[onclick="sleepPet()"]').forEach(btn => {
-        btn.onclick = sleepPet;
-    });
-    document.querySelectorAll('[onclick="takeToVet()"]').forEach(btn => {
-        btn.onclick = takeToVet;
-    });
-    
-    // Navigation tabs
-    document.querySelectorAll('.navigation-tab').forEach(tab => {
-        const section = tab.getAttribute('data-section') || 
-                       tab.textContent.trim().toLowerCase().replace(' ', '');
-        tab.onclick = () => showSection(section);
-    });
-    
-    // Other buttons
-    document.querySelectorAll('[onclick="logout()"]').forEach(btn => {
-        btn.onclick = logout;
-    });
-}
-
-// Game loop for time-based mechanics
-function startGameLoop() {
-    setInterval(() => {
-        updatePetNeeds();
-        updateTimeAndWeather();
-    }, 60000); // Update every minute
-}
-
-function updatePetNeeds() {
-    const now = Date.now();
-    const hoursPassed = {
-        feed: (now - gameState.currentPet.lastFed) / (1000 * 60 * 60),
-        play: (now - gameState.currentPet.lastPlayed) / (1000 * 60 * 60),
-        clean: (now - gameState.currentPet.lastCleaned) / (1000 * 60 * 60),
-        sleep: (now - gameState.currentPet.lastSlept) / (1000 * 60 * 60)
-    };
-    
-    // Decrease stats over time
-    if (hoursPassed.feed > 1) {
-        gameState.currentPet.hunger = Math.max(0, gameState.currentPet.hunger - 5);
-    }
-    if (hoursPassed.clean > 2) {
-        gameState.currentPet.cleanliness = Math.max(0, gameState.currentPet.cleanliness - 3);
-    }
-    if (hoursPassed.sleep > 6) {
-        gameState.currentPet.energy = Math.max(0, gameState.currentPet.energy - 10);
-    }
-    if (hoursPassed.play > 3) {
-        gameState.currentPet.happiness = Math.max(0, gameState.currentPet.happiness - 8);
-    }
-    
-    updatePetMood();
-    updateUI();
-}
-
-function updateTimeAndWeather() {
-    const hour = new Date().getHours();
-    const dayNightCycle = document.getElementById('dayNightCycle');
-    
-    if (hour >= 6 && hour < 18) {
-        gameState.timeOfDay = 'day';
-        dayNightCycle.className = 'day-night-cycle day';
-    } else {
-        gameState.timeOfDay = 'night';
-        dayNightCycle.className = 'day-night-cycle night';
-    }
-    
-    // Random weather changes
-    if (Math.random() < 0.1) {
-        const weathers = ['sunny', 'cloudy', 'rainy', 'snowy'];
-        gameState.weather = weathers[Math.floor(Math.random() * weathers.length)];
-        updateWeatherDisplay();
-    }
-}
-
-function updateWeatherDisplay() {
-    const weatherText = document.getElementById('weatherText');
-    const weatherIcon = document.querySelector('#currentWeather i');
-    const weatherEffect = document.getElementById('weatherEffect');
-    
-    switch(gameState.weather) {
-        case 'sunny':
-            weatherText.textContent = 'Sunny';
-            weatherIcon.className = 'fas fa-sun';
-            weatherEffect.className = 'weather-effect';
-            break;
-        case 'cloudy':
-            weatherText.textContent = 'Cloudy';
-            weatherIcon.className = 'fas fa-cloud';
-            weatherEffect.className = 'weather-effect';
-            break;
-        case 'rainy':
-            weatherText.textContent = 'Rainy';
-            weatherIcon.className = 'fas fa-cloud-rain';
-            weatherEffect.className = 'weather-effect rain';
-            break;
-        case 'snowy':
-            weatherText.textContent = 'Snowy';
-            weatherIcon.className = 'fas fa-snowflake';
-            weatherEffect.className = 'weather-effect';
-            break;
-    }
-}
-
-// Initialize the game when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Setup password toggle
-    setupPasswordToggles();
-    
-    // Check for saved game state
-    loadGameState();
-    
-    // Initialize game
-    initializeGame();
-    setupButtonListeners();
-    startGameLoop();
-    initializeCharts();
-});
+        <!-- Notification Area -->
+        <div id="notificationArea"></div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
