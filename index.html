@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Pet Game - Take Care of Your Digital Friend</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        .pet-container {
+            perspective: 1000px;
+        }
+        
+        .pet {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .pet.happy {
+            animation: bounce 0.5s ease-in-out;
+        }
+        
+        .pet.sleeping {
+            filter: brightness(0.7);
+            animation: breathe 2s ease-in-out infinite;
+        }
+        
+        .pet.dirty {
+            filter: sepia(0.3) brightness(0.8);
+        }
+        
+        .pet.hungry {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .status-bar {
+            transition: width 0.3s ease;
+        }
+        
+        .notification {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .game-button {
+            transition: all 0.2s ease;
+        }
+        
+        .game-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .game-button:active {
+            transform: translateY(0);
+        }
+        
+        .pet-eyes {
+            position: absolute;
+            top: 30%;
+            width: 100%;
+            height: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .eye {
+            width: 8px;
+            height: 8px;
+            background: black;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .pet.sleeping .eye {
+            height: 2px;
+            border-radius: 0;
+        }
+        
+        .pet-mouth {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 10px;
+            border: 2px solid black;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .pet.happy .pet-mouth {
+            border-color: #10B981;
+        }
+        
+        .pet.hungry .pet-mouth {
+            border-color: #EF4444;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+        
+        .heart {
+            animation: floatUp 1s ease-out forwards;
+            font-size: 20px;
+            color: #EF4444;
+        }
+        
+        @keyframes floatUp {
+            from {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-50px) scale(0.5);
+                opacity: 0;
+            }
+        }
+        
+        .mini-game {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .mini-game.active {
+            display: flex;
+        }
+        
+        .click-target {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            animation: pulse 1s ease-in-out infinite;
+        }
+        
+        .click-target:hover {
+            transform: scale(1.1);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .achievement {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            animation: achievementSlide 3s ease-in-out;
+            z-index: 1001;
+        }
+        
+        @keyframes achievementSlide {
+            0%, 100% { transform: translateX(300px); }
+            20%, 80% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">🐾 Virtual Pet Game</h1>
+            <p class="text-white text-lg">Take care of your digital friend!</p>
+        </header>
+
+        <!-- Game Area -->
+        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-8">
+            <!-- Pet Info -->
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2" id="petName">Buddy</h2>
+                <p class="text-gray-600">Level <span id="petLevel">1</span> • Age <span id="petAge">0</span> days</p>
+                <p class="text-sm text-gray-500">Coins: <span id="coins" class="text-yellow-600 font-bold">50</span></p>
+            </div>
+
+            <!-- Pet Display -->
+            <div class="pet-container flex justify-center mb-8">
+                <div class="relative">
+                    <div id="pet" class="pet mx-auto relative" style="background: linear-gradient(45deg, #FF6B6B, #4ECDC4);">
+                        <div class="pet-eyes">
+                            <div class="eye"></div>
+                            <div class="eye"></div>
+                        </div>
+                        <div class="pet-mouth"></div>
+                    </div>
+                    <div id="floatingHearts" class="floating-hearts"></div>
+                </div>
+            </div>
+
+            <!-- Status Bars -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-gray-100 rounded-lg p-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-utensils text-orange-500 mr-2"></i>
+                        <span class="font-semibold">Hunger</span>
+                    </div>
+                    <div class="w-full bg-gray-300 rounded-full h-3">
+                        <div id="hungerBar" class="status-bar bg-orange-500 h-3 rounded-full" style="width: 80%"></div>
+                    </div>
+                    <span id="hungerText" class="text-sm text-gray-600">80/100</span>
+                </div>
+
+                <div class="bg-gray-100 rounded-lg p-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-smile text-green-500 mr-2"></i>
+                        <span class="font-semibold">Happiness</span>
+                    </div>
+                    <div class="w-full bg-gray-300 rounded-full h-3">
+                        <div id="happinessBar" class="status-bar bg-green-500 h-3 rounded-full" style="width: 75%"></div>
+                    </div>
+                    <span id="happinessText" class="text-sm text-gray-600">75/100</span>
+                </div>
+
+                <div class="bg-gray-100 rounded-lg p-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-tint text-blue-500 mr-2"></i>
+                        <span class="font-semibold">Clean</span>
+                    </div>
+                    <div class="w-full bg-gray-300 rounded-full h-3">
+                        <div id="cleanBar" class="status-bar bg-blue-500 h-3 rounded-full" style="width: 90%"></div>
+                    </div>
+                    <span id="cleanText" class="text-sm text-gray-600">90/100</span>
+                </div>
+
+                <div class="bg-gray-100 rounded-lg p-4">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-bed text-purple-500 mr-2"></i>
+                        <span class="font-semibold">Energy</span>
+                    </div>
+                    <div class="w-full bg-gray-300 rounded-full h-3">
+                        <div id="energyBar" class="status-bar bg-purple-500 h-3 rounded-full" style="width: 85%"></div>
+                    </div>
+                    <span id="energyText" class="text-sm text-gray-600">85/100</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <button id="feedBtn" class="game-button bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg">
+                    <i class="fas fa-utensils text-xl mb-2 block"></i>
+                    Feed (5 coins)
+                </button>
+
+                <button id="playBtn" class="game-button bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg">
+                    <i class="fas fa-gamepad text-xl mb-2 block"></i>
+                    Play Game
+                </button>
+
+                <button id="cleanBtn" class="game-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg">
+                    <i class="fas fa-shower text-xl mb-2 block"></i>
+                    Clean (3 coins)
+                </button>
+
+                <button id="sleepBtn" class="game-button bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg">
+                    <i class="fas fa-bed text-xl mb-2 block"></i>
+                    Sleep
+                </button>
+            </div>
+
+            <!-- Customization -->
+            <div class="bg-gray-100 rounded-lg p-6 mb-6">
+                <h3 class="text-lg font-bold mb-4">Customize Your Pet</h3>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Pet Color</label>
+                        <select id="petColor" class="w-full p-2 border rounded">
+                            <option value="linear-gradient(45deg, #FF6B6B, #4ECDC4)">Coral & Teal</option>
+                            <option value="linear-gradient(45deg, #FFD93D, #FF6B6B)">Yellow & Red</option>
+                            <option value="linear-gradient(45deg, #6BCF7F, #4D79A4)">Green & Blue</option>
+                            <option value="linear-gradient(45deg, #9B59B6, #3498DB)">Purple & Blue</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Pet Name</label>
+                        <input id="petNameInput" type="text" class="w-full p-2 border rounded" placeholder="Enter name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Actions</label>
+                        <button id="saveBtn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded">
+                            Save Game
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="bg-gray-100 rounded-lg p-6">
+                <h3 class="text-lg font-bold mb-4">Achievements</h3>
+                <div id="achievements" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Achievements will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div id="notifications" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"></div>
+
+        <!-- Mini Game Modal -->
+        <div id="miniGame" class="mini-game">
+            <div class="bg-white rounded-lg p-8 text-center max-w-md mx-4">
+                <h3 class="text-2xl font-bold mb-4">Click the Targets!</h3>
+                <p class="mb-4">Score: <span id="gameScore">0</span></p>
+                <p class="mb-4">Time: <span id="gameTime">10</span>s</p>
+                <div id="gameArea" class="relative bg-gray-200 rounded-lg mx-auto mb-4" style="width: 300px; height: 200px;">
+                    <!-- Click targets will appear here -->
+                </div>
+                <button id="closeGame" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
+                    Close Game
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class VirtualPet {
+            constructor() {
+                this.stats = {
+                    hunger: 80,
+                    happiness: 75,
+                    cleanliness: 90,
+                    energy: 85
+                };
+                
+                this.pet = {
+                    name: 'Buddy',
+                    level: 1,
+                    age: 0,
+                    experience: 0
+                };
+                
+                this.player = {
+                    coins: 50
+                };
+                
+                this.achievements = [
+                    { id: 'first_feed', name: 'First Meal', desc: 'Feed your pet for the first time', unlocked: false },
+                    { id: 'clean_master', name: 'Clean Master', desc: 'Keep pet clean for 5 actions', unlocked: false },
+                    { id: 'happy_pet', name: 'Happy Pet', desc: 'Reach 100 happiness', unlocked: false },
+                    { id: 'level_up', name: 'Growing Up', desc: 'Reach level 2', unlocked: false },
+                    { id: 'rich_player', name: 'Rich Player', desc: 'Earn 100 coins', unlocked: false },
+                    { id: 'game_master', name: 'Game Master', desc: 'Score 20 in mini game', unlocked: false },
+                    { id: 'pet_care', name: 'Pet Care', desc: 'Play for 5 minutes', unlocked: false },
+                    { id: 'night_owl', name: 'Night Owl', desc: 'Put pet to sleep 3 times', unlocked: false }
+                ];
+                
+                this.gameState = {
+                    isSleeping: false,
+                    lastUpdate: Date.now(),
+                    cleanStreak: 0,
+                    sleepCount: 0,
+                    startTime: Date.now()
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.loadGame();
+                this.bindEvents();
+                this.updateDisplay();
+                this.startGameLoop();
+                this.renderAchievements();
+            }
+            
+            loadGame() {
+                const saved = localStorage.getItem('virtualPetSave');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    Object.assign(this.stats, data.stats);
+                    Object.assign(this.pet, data.pet);
+                    Object.assign(this.player, data.player);
+                    Object.assign(this.gameState, data.gameState);
+                    if (data.achievements) {
+                        this.achievements = data.achievements;
+                    }
+                }
+            }
+            
+            saveGame() {
+                const saveData = {
+                    stats: this.stats,
+                    pet: this.pet,
+                    player: this.player,
+                    gameState: this.gameState,
+                    achievements: this.achievements
+                };
+                localStorage.setItem('virtualPetSave', JSON.stringify(saveData));
+                this.showNotification('Game saved!', 'success');
+            }
+            
+            bindEvents() {
+                document.getElementById('feedBtn').addEventListener('click', () => this.feed());
+                document.getElementById('playBtn').addEventListener('click', () => this.startMiniGame());
+                document.getElementById('cleanBtn').addEventListener('click', () => this.clean());
+                document.getElementById('sleepBtn').addEventListener('click', () => this.sleep());
+                document.getElementById('saveBtn').addEventListener('click', () => this.saveGame());
+                document.getElementById('petColor').addEventListener('change', (e) => this.changePetColor(e.target.value));
+                document.getElementById('petNameInput').addEventListener('change', (e) => this.changePetName(e.target.value));
+                document.getElementById('closeGame').addEventListener('click', () => this.closeMiniGame());
+            }
+            
+            startGameLoop() {
+                setInterval(() => {
+                    if (!this.gameState.isSleeping) {
+                        this.degradeStats();
+                        this.ageUp();
+                    }
+                    this.updateDisplay();
+                    this.checkAchievements();
+                }, 5000); // Update every 5 seconds
+            }
+            
+            degradeStats() {
+                this.stats.hunger = Math.max(0, this.stats.hunger - 2);
+                this.stats.happiness = Math.max(0, this.stats.happiness - 1);
+                this.stats.cleanliness = Math.max(0, this.stats.cleanliness - 1);
+                if (!this.gameState.isSleeping) {
+                    this.stats.energy = Math.max(0, this.stats.energy - 1);
+                }
+            }
+            
+            ageUp() {
+                const timePassed = Date.now() - this.gameState.lastUpdate;
+                if (timePassed > 60000) { // Age up every minute
+                    this.pet.age++;
+                    this.gameState.lastUpdate = Date.now();
+                    
+                    if (this.pet.age % 10 === 0) {
+                        this.levelUp();
+                    }
+                }
+            }
+            
+            levelUp() {
+                this.pet.level++;
+                this.showNotification(`Level up! ${this.pet.name} is now level ${this.pet.level}!`, 'success');
+                this.showHearts();
+                this.player.coins += 20;
+            }
+            
+            feed() {
+                if (this.player.coins >= 5) {
+                    this.player.coins -= 5;
+                    this.stats.hunger = Math.min(100, this.stats.hunger + 25);
+                    this.stats.happiness = Math.min(100, this.stats.happiness + 5);
+                    this.pet.experience += 10;
+                    this.showNotification(`${this.pet.name} enjoyed the meal!`, 'success');
+                    this.showHearts();
+                    this.petAnimation('happy');
+                } else {
+                    this.showNotification('Not enough coins!', 'error');
+                }
+            }
+            
+            clean() {
+                if (this.player.coins >= 3) {
+                    this.player.coins -= 3;
+                    this.stats.cleanliness = 100;
+                    this.stats.happiness = Math.min(100, this.stats.happiness + 10);
+                    this.pet.experience += 5;
+                    this.gameState.cleanStreak++;
+                    this.showNotification(`${this.pet.name} is sparkling clean!`, 'success');
+                    this.petAnimation('happy');
+                } else {
+                    this.showNotification('Not enough coins!', 'error');
+                }
+            }
+            
+            sleep() {
+                this.gameState.isSleeping = !this.gameState.isSleeping;
+                if (this.gameState.isSleeping) {
+                    this.gameState.sleepCount++;
+                    this.showNotification(`${this.pet.name} is taking a nap...`, 'info');
+                    this.petAnimation('sleeping');
+                    
+                    // Restore energy while sleeping
+                    const sleepInterval = setInterval(() => {
+                        if (this.gameState.isSleeping) {
+                            this.stats.energy = Math.min(100, this.stats.energy + 5);
+                            this.updateDisplay();
+                            
+                            if (this.stats.energy >= 100) {
+                                this.gameState.isSleeping = false;
+                                this.showNotification(`${this.pet.name} woke up refreshed!`, 'success');
+                                this.petAnimation('happy');
+                                clearInterval(sleepInterval);
+                            }
+                        } else {
+                            clearInterval(sleepInterval);
+                        }
+                    }, 2000);
+                } else {
+                    this.showNotification(`${this.pet.name} woke up!`, 'info');
+                    this.petAnimation('normal');
+                }
+            }
+            
+            startMiniGame() {
+                const miniGame = document.getElementById('miniGame');
+                const gameArea = document.getElementById('gameArea');
+                const scoreElement = document.getElementById('gameScore');
+                const timeElement = document.getElementById('gameTime');
+                
+                let score = 0;
+                let timeLeft = 10;
+                let gameInterval;
+                let spawnInterval;
+                
+                miniGame.classList.add('active');
+                scoreElement.textContent = score;
+                timeElement.textContent = timeLeft;
+                
+                // Game timer
+                gameInterval = setInterval(() => {
+                    timeLeft--;
+                    timeElement.textContent = timeLeft;
+                    
+                    if (timeLeft <= 0) {
+                        this.endMiniGame(score, gameInterval, spawnInterval);
+                    }
+                }, 1000);
+                
+                // Spawn targets
+                spawnInterval = setInterval(() => {
+                    this.spawnTarget(gameArea, scoreElement, () => score++);
+                }, 1500);
+            }
+            
+            spawnTarget(gameArea, scoreElement, onHit) {
+                const target = document.createElement('div');
+                target.className = 'click-target absolute';
+                target.style.left = Math.random() * (300 - 60) + 'px';
+                target.style.top = Math.random() * (200 - 60) + 'px';
+                
+                target.addEventListener('click', () => {
+                    onHit();
+                    scoreElement.textContent = parseInt(scoreElement.textContent) + 1;
+                    gameArea.removeChild(target);
+                    this.showHearts();
+                });
+                
+                gameArea.appendChild(target);
+                
+                // Remove target after 3 seconds if not clicked
+                setTimeout(() => {
+                    if (gameArea.contains(target)) {
+                        gameArea.removeChild(target);
+                    }
+                }, 3000);
+            }
+            
+            endMiniGame(score, gameInterval, spawnInterval) {
+                clearInterval(gameInterval);
+                clearInterval(spawnInterval);
+                
+                const coinsEarned = score * 2;
+                this.player.coins += coinsEarned;
+                this.stats.happiness = Math.min(100, this.stats.happiness + score);
+                this.pet.experience += score * 2;
+                
+                this.showNotification(`Game over! Score: ${score}, Earned: ${coinsEarned} coins`, 'success');
+                this.closeMiniGame();
+            }
+            
+            closeMiniGame() {
+                const miniGame = document.getElementById('miniGame');
+                const gameArea = document.getElementById('gameArea');
+                miniGame.classList.remove('active');
+                gameArea.innerHTML = '';
+            }
+            
+            changePetColor(color) {
+                document.getElementById('pet').style.background = color;
+            }
+            
+            changePetName(name) {
+                if (name.trim()) {
+                    this.pet.name = name.trim();
+                    document.getElementById('petName').textContent = this.pet.name;
+                }
+            }
+            
+            petAnimation(type) {
+                const pet = document.getElementById('pet');
+                pet.className = `pet ${type}`;
+                
+                setTimeout(() => {
+                    pet.className = 'pet';
+                }, 1000);
+            }
+            
+            showHearts() {
+                const container = document.getElementById('floatingHearts');
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '❤️';
+                container.appendChild(heart);
+                
+                setTimeout(() => {
+                    container.removeChild(heart);
+                }, 1000);
+            }
+            
+            showNotification(message, type) {
+                const container = document.getElementById('notifications');
+                const notification = document.createElement('div');
+                notification.className = `notification px-6 py-3 rounded-lg shadow-lg text-white mb-2 ${
+                    type === 'success' ? 'bg-green-500' : 
+                    type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+                }`;
+                notification.textContent = message;
+                
+                container.appendChild(notification);
+                
+                setTimeout(() => {
+                    container.removeChild(notification);
+                }, 3000);
+            }
+            
+            updateDisplay() {
+                // Update status bars
+                this.updateStatusBar('hunger', this.stats.hunger);
+                this.updateStatusBar('happiness', this.stats.happiness);
+                this.updateStatusBar('cleanliness', this.stats.cleanliness);
+                this.updateStatusBar('energy', this.stats.energy);
+                
+                // Update pet info
+                document.getElementById('petName').textContent = this.pet.name;
+                document.getElementById('petLevel').textContent = this.pet.level;
+                document.getElementById('petAge').textContent = this.pet.age;
+                document.getElementById('coins').textContent = this.player.coins;
+                
+                // Update pet appearance based on stats
+                const pet = document.getElementById('pet');
+                pet.classList.remove('hungry', 'dirty', 'sleeping');
+                
+                if (this.stats.hunger < 30) pet.classList.add('hungry');
+                if (this.stats.cleanliness < 50) pet.classList.add('dirty');
+                if (this.gameState.isSleeping) pet.classList.add('sleeping');
+            }
+            
+            updateStatusBar(stat, value) {
+                const bar = document.getElementById(`${stat}Bar`);
+                const text = document.getElementById(`${stat}Text`);
+                bar.style.width = `${value}%`;
+                text.textContent = `${value}/100`;
+                
+                // Color coding
+                if (value > 70) bar.className = `status-bar h-3 rounded-full bg-green-500`;
+                else if (value > 30) bar.className = `status-bar h-3 rounded-full bg-yellow-500`;
+                else bar.className = `status-bar h-3 rounded-full bg-red-500`;
+            }
+            
+            checkAchievements() {
+                const playTime = Date.now() - this.gameState.startTime;
+                
+                this.unlockAchievement('first_feed', this.pet.experience > 0);
+                this.unlockAchievement('clean_master', this.gameState.cleanStreak >= 5);
+                this.unlockAchievement('happy_pet', this.stats.happiness >= 100);
+                this.unlockAchievement('level_up', this.pet.level >= 2);
+                this.unlockAchievement('rich_player', this.player.coins >= 100);
+                this.unlockAchievement('night_owl', this.gameState.sleepCount >= 3);
+                this.unlockAchievement('pet_care', playTime > 300000); // 5 minutes
+            }
+            
+            unlockAchievement(id, condition) {
+                const achievement = this.achievements.find(a => a.id === id);
+                if (achievement && !achievement.unlocked && condition) {
+                    achievement.unlocked = true;
+                    this.showAchievement(achievement);
+                    this.renderAchievements();
+                    this.player.coins += 10;
+                }
+            }
+            
+            showAchievement(achievement) {
+                const achievementDiv = document.createElement('div');
+                achievementDiv.className = 'achievement';
+                achievementDiv.innerHTML = `
+                    <div class="font-bold">🏆 Achievement Unlocked!</div>
+                    <div>${achievement.name}</div>
+                    <div class="text-sm">${achievement.desc}</div>
+                `;
+                
+                document.body.appendChild(achievementDiv);
+                
+                setTimeout(() => {
+                    document.body.removeChild(achievementDiv);
+                }, 3000);
+            }
+            
+            renderAchievements() {
+                const container = document.getElementById('achievements');
+                container.innerHTML = '';
+                
+                this.achievements.forEach(achievement => {
+                    const div = document.createElement('div');
+                    div.className = `p-3 rounded-lg text-center ${
+                        achievement.unlocked ? 'bg-yellow-100 border-2 border-yellow-400' : 'bg-gray-200'
+                    }`;
+                    div.innerHTML = `
+                        <div class="text-2xl mb-1">${achievement.unlocked ? '🏆' : '🔒'}</div>
+                        <div class="font-semibold text-sm">${achievement.name}</div>
+                        <div class="text-xs text-gray-600">${achievement.desc}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+        }
+        
+        // Start the game when page loads
+        window.addEventListener('load', () => {
+            new VirtualPet();
+        });
+    </script>
+</body>
+</html>
