@@ -3,80 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Virtual Pet Paradise</title>
+    <title>PetVerse - The Ultimate Virtual Pet Universe</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         
         * {
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Open Sans', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        .game-title {
-            font-family: 'Fredoka One', cursive;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
-            background-size: 400% 400%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientShift 3s ease infinite;
-        }
-        
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+            font-family: 'Poppins', sans-serif;
         }
         
         .pet-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
         }
         
-        .pet-sprite {
-            width: 200px;
-            height: 200px;
+        .pet-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .pet-avatar {
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            margin: 20px auto;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 80px;
-            animation: petBreathe 2s ease-in-out infinite;
+            font-size: 3rem;
+            margin: 0 auto;
+            animation: petPulse 2s infinite;
         }
         
-        @keyframes petBreathe {
+        @keyframes petPulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
-        }
-        
-        .pet-sprite:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
-        .pet-sprite.happy {
-            animation: petJump 0.6s ease-in-out;
-        }
-        
-        @keyframes petJump {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
         }
         
         .status-bar {
@@ -85,141 +51,161 @@
             border-radius: 10px;
             overflow: hidden;
             position: relative;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .status-fill {
             height: 100%;
-            border-radius: 10px;
             transition: width 0.5s ease;
-            position: relative;
+            border-radius: 10px;
+        }
+        
+        .navigation-tab {
+            padding: 12px 20px;
+            margin: 4px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .navigation-tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .navigation-tab.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .room-tile {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .room-tile:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .furniture-item {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            background: linear-gradient(45deg, #ffecd2, #fcb69f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .furniture-item:hover {
+            transform: scale(1.1);
+        }
+        
+        .mini-game-card {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .mini-game-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .achievement-badge {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #8b5000;
+        }
+        
+        .weather-widget {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            text-align: center;
+        }
+        
+        .pet-mood {
+            font-size: 2rem;
+            animation: moodBounce 1.5s infinite;
+        }
+        
+        @keyframes moodBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            color: #ff6b6b;
+            font-size: 1.5rem;
+            animation: floatUp 2s ease-out forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-50px); }
+        }
+        
+        .experience-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
             overflow: hidden;
         }
         
-        .status-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
+        .experience-fill {
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 2s infinite;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.5s ease;
         }
         
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+        .coin-animation {
+            animation: coinFlip 0.6s ease;
         }
         
-        .hunger { background: linear-gradient(90deg, #ff6b6b, #ee5a52); }
-        .happiness { background: linear-gradient(90deg, #4ecdc4, #44a08d); }
-        .cleanliness { background: linear-gradient(90deg, #45b7d1, #3498db); }
-        .energy { background: linear-gradient(90deg, #96ceb4, #27ae60); }
-        .health { background: linear-gradient(90deg, #f093fb, #f5576c); }
-        .intelligence { background: linear-gradient(90deg, #ffecd2, #fcb69f); }
-        
-        .action-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        @keyframes coinFlip {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(180deg); }
+            100% { transform: rotateY(360deg); }
         }
         
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-        
-        .action-btn:active {
-            transform: translateY(0);
-        }
-        
-        .mini-game {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin: 10px 0;
-        }
-        
-        .pet-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid transparent;
-        }
-        
-        .pet-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        
-        .pet-card.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
-        }
-        
-        .achievement {
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px 0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            border-left: 5px solid #e17055;
-        }
-        
-        .weather {
-            position: absolute;
+        .notification {
+            position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(255,255,255,0.9);
-            padding: 10px 15px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
         }
         
-        .day-night-cycle {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            transition: background 2s ease;
-        }
-        
-        .day-night-cycle.day {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .day-night-cycle.night {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-        }
-        
-        .shop-item {
-            background: white;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 10px;
-            border: 2px solid #e2e8f0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .shop-item:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
+        .notification.show {
+            transform: translateX(0);
         }
         
         .modal {
@@ -228,7 +214,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -237,577 +223,1002 @@
         
         .modal-content {
             background: white;
+            border-radius: 16px;
             padding: 30px;
-            border-radius: 20px;
-            max-width: 90%;
-            max-height: 90%;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
             overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
         
-        .hidden { display: none; }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #4ecdc4;
-            color: white;
-            padding: 15px 25px;
-            border-radius: 25px;
-            z-index: 1001;
-            animation: slideDown 0.5s ease;
+        .breeding-animation {
+            animation: heartPulse 1s infinite;
         }
         
-        @keyframes slideDown {
-            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
-            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        @keyframes heartPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
         
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-        }
-        
-        .game-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .game-card:hover {
-            background: #e9ecef;
-            transform: scale(1.05);
-        }
-        
-        .game-card.matched {
-            background: #4ecdc4;
-            color: white;
-            border-color: #44a08d;
-        }
-        
-        .pet-stats-chart {
-            width: 100%;
-            height: 300px;
-            margin: 20px 0;
-        }
-        
-        .environment-bg {
+        .day-night-cycle {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            border-radius: 20px;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.3;
-            transition: all 0.5s ease;
+            pointer-events: none;
+            transition: background 2s ease;
         }
         
-        .floating-hearts {
+        .day {
+            background: linear-gradient(to bottom, #87CEEB, #98FB98);
+        }
+        
+        .night {
+            background: linear-gradient(to bottom, #191970, #4B0082);
+        }
+        
+        .weather-effect {
             position: absolute;
-            font-size: 20px;
-            color: #ff6b6b;
-            animation: floatUp 2s ease-out forwards;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
         }
         
-        @keyframes floatUp {
-            from {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
+        .rain {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><line x1="10" y1="0" x2="5" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/><line x1="30" y1="0" x2="25" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/><line x1="50" y1="0" x2="45" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/><line x1="70" y1="0" x2="65" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/><line x1="90" y1="0" x2="85" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/></svg>') repeat;
+            animation: rainFall 1s linear infinite;
         }
         
-        .pet-trait {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            border-radius: 20px;
-            padding: 10px 15px;
-            margin: 5px;
-            display: inline-block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #333;
+        @keyframes rainFall {
+            0% { transform: translateY(-100px); }
+            100% { transform: translateY(100vh); }
         }
         
-        .evolution-stage {
-            text-align: center;
-            padding: 20px;
-            margin: 10px 0;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-radius: 15px;
+        .pet-physics {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .social-notification {
+            background: linear-gradient(45deg, #ff9a9e, #fecfef);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin: 4px 0;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .loading-spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body>
-    <div class="day-night-cycle day" id="dayNightCycle"></div>
-    
-    <!-- Weather Widget -->
-    <div class="weather" id="weatherWidget">
-        <i class="fas fa-sun text-yellow-500"></i>
-        <span class="ml-2">Sunny</span>
-    </div>
-    
-    <!-- Main Game Container -->
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <header class="text-center mb-8">
-            <h1 class="game-title text-6xl font-bold mb-4">🌟 Virtual Pet Paradise 🌟</h1>
-            <div class="flex justify-center items-center space-x-6">
-                <div class="bg-white rounded-full px-4 py-2 shadow-lg">
-                    <i class="fas fa-coins text-yellow-500"></i>
-                    <span class="ml-2 font-bold" id="coins">100</span>
-                </div>
-                <div class="bg-white rounded-full px-4 py-2 shadow-lg">
-                    <i class="fas fa-trophy text-purple-500"></i>
-                    <span class="ml-2 font-bold" id="level">1</span>
-                </div>
-                <div class="bg-white rounded-full px-4 py-2 shadow-lg">
-                    <i class="fas fa-star text-blue-500"></i>
-                    <span class="ml-2 font-bold" id="experience">0/100</span>
-                </div>
+<body class="pet-container">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="pet-card w-full max-w-md p-8">
+            <div class="text-center mb-8">
+                <div class="text-6xl mb-4">🐾</div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">PetVerse</h1>
+                <p class="text-gray-600">The Ultimate Virtual Pet Universe</p>
             </div>
-        </header>
-        
-        <!-- Pet Selection Screen -->
-        <div id="petSelectionScreen" class="max-w-6xl mx-auto">
-            <h2 class="text-3xl font-bold text-white text-center mb-8">Choose Your Virtual Pet</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="pet-card" data-pet="cat">
-                    <div class="text-6xl text-center mb-4">🐱</div>
-                    <h3 class="text-xl font-bold text-center">Cat</h3>
-                    <p class="text-gray-600 text-center">Independent and playful</p>
-                    <div class="mt-3">
-                        <span class="pet-trait">Curious</span>
-                        <span class="pet-trait">Agile</span>
-                        <span class="pet-trait">Sleepy</span>
-                    </div>
+            
+            <div id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        <i class="fas fa-user mr-2"></i>Username
+                    </label>
+                    <input type="text" id="loginUsername" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter username">
                 </div>
-                <div class="pet-card" data-pet="dog">
-                    <div class="text-6xl text-center mb-4">🐕</div>
-                    <h3 class="text-xl font-bold text-center">Dog</h3>
-                    <p class="text-gray-600 text-center">Loyal and energetic</p>
-                    <div class="mt-3">
-                        <span class="pet-trait">Loyal</span>
-                        <span class="pet-trait">Energetic</span>
-                        <span class="pet-trait">Friendly</span>
-                    </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        <i class="fas fa-lock mr-2"></i>Password
+                    </label>
+                    <input type="password" id="loginPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter password">
                 </div>
-                <div class="pet-card" data-pet="bird">
-                    <div class="text-6xl text-center mb-4">🦜</div>
-                    <h3 class="text-xl font-bold text-center">Bird</h3>
-                    <p class="text-gray-600 text-center">Intelligent and social</p>
-                    <div class="mt-3">
-                        <span class="pet-trait">Smart</span>
-                        <span class="pet-trait">Social</span>
-                        <span class="pet-trait">Musical</span>
-                    </div>
-                </div>
-                <div class="pet-card" data-pet="fish">
-                    <div class="text-6xl text-center mb-4">🐠</div>
-                    <h3 class="text-xl font-bold text-center">Fish</h3>
-                    <p class="text-gray-600 text-center">Calm and graceful</p>
-                    <div class="mt-3">
-                        <span class="pet-trait">Peaceful</span>
-                        <span class="pet-trait">Graceful</span>
-                        <span class="pet-trait">Zen</span>
-                    </div>
-                </div>
-                <div class="pet-card" data-pet="hamster">
-                    <div class="text-6xl text-center mb-4">🐹</div>
-                    <h3 class="text-xl font-bold text-center">Hamster</h3>
-                    <p class="text-gray-600 text-center">Small and adorable</p>
-                    <div class="mt-3">
-                        <span class="pet-trait">Tiny</span>
-                        <span class="pet-trait">Active</span>
-                        <span class="pet-trait">Cute</span>
-                    </div>
-                </div>
-                <div class="pet-card" data-pet="rabbit">
-                    <div class="text-6xl text-center mb-4">🐰</div>
-                    <h3 class="text-xl font-bold text-center">Rabbit</h3>
-                    <p class="text-gray-600 text-center">Gentle and hopeful</p>
-                    <div class="mt-3">
-                        <span class="pet-trait">Gentle</span>
-                        <span class="pet-trait">Quick</span>
-                        <span class="pet-trait">Soft</span>
-                    </div>
-                </div>
+                <button onclick="login()" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 mb-4">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                </button>
+                <button onclick="showRegister()" class="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300">
+                    Create New Account
+                </button>
             </div>
-            <div class="text-center mt-8">
-                <button class="action-btn text-lg px-8 py-3" onclick="confirmPetSelection()">
-                    <i class="fas fa-heart mr-2"></i>Start Your Journey
+            
+            <div id="registerForm" style="display: none;">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        <i class="fas fa-user mr-2"></i>Username
+                    </label>
+                    <input type="text" id="registerUsername" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Choose username">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        <i class="fas fa-envelope mr-2"></i>Email
+                    </label>
+                    <input type="email" id="registerEmail" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter email">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">
+                        <i class="fas fa-lock mr-2"></i>Password
+                    </label>
+                    <input type="password" id="registerPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Create password">
+                </div>
+                <button onclick="register()" class="w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-blue-700 transition duration-300 mb-4">
+                    <i class="fas fa-user-plus mr-2"></i>Create Account
+                </button>
+                <button onclick="showLogin()" class="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300">
+                    Back to Login
                 </button>
             </div>
         </div>
+    </div>
+
+    <!-- Main Game Interface -->
+    <div id="gameScreen" style="display: none;" class="min-h-screen">
+        <!-- Day/Night Cycle Background -->
+        <div id="dayNightCycle" class="day-night-cycle day"></div>
         
-        <!-- Main Game Screen -->
-        <div id="gameScreen" class="hidden max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Pet Display Area -->
-                <div class="lg:col-span-2">
-                    <div class="pet-container relative p-8">
-                        <div class="environment-bg" id="environmentBg"></div>
-                        <div class="relative z-10">
-                            <div class="text-center mb-6">
-                                <h2 class="text-2xl font-bold mb-2" id="petName">Your Pet</h2>
-                                <p class="text-gray-600" id="petMood">Feeling Happy</p>
-                            </div>
-                            
-                            <!-- Pet Sprite -->
-                            <div class="pet-sprite" id="petSprite" onclick="petPet()">
+        <!-- Weather Effects -->
+        <div id="weatherEffect" class="weather-effect"></div>
+        
+        <!-- Header -->
+        <header class="relative z-10 p-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold">PetVerse</h1>
+                    <div class="weather-widget">
+                        <div id="currentWeather" class="flex items-center space-x-2">
+                            <i class="fas fa-sun"></i>
+                            <span id="weatherText">Sunny</span>
+                            <span id="temperature">72°F</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-coins text-yellow-400"></i>
+                        <span id="userCoins" class="coin-animation">1000</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-trophy text-yellow-400"></i>
+                        <span id="userLevel">1</span>
+                    </div>
+                    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg transition duration-300">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="relative z-10 bg-white bg-opacity-90 p-4 shadow-lg">
+            <div class="flex space-x-2 overflow-x-auto">
+                <div class="navigation-tab active" onclick="showSection('home')">
+                    <i class="fas fa-home mr-2"></i>Home
+                </div>
+                <div class="navigation-tab" onclick="showSection('pets')">
+                    <i class="fas fa-paw mr-2"></i>My Pets
+                </div>
+                <div class="navigation-tab" onclick="showSection('house')">
+                    <i class="fas fa-house-user mr-2"></i>Pet House
+                </div>
+                <div class="navigation-tab" onclick="showSection('explore')">
+                    <i class="fas fa-map mr-2"></i>Explore
+                </div>
+                <div class="navigation-tab" onclick="showSection('games')">
+                    <i class="fas fa-gamepad mr-2"></i>Mini Games
+                </div>
+                <div class="navigation-tab" onclick="showSection('social')">
+                    <i class="fas fa-users mr-2"></i>Social
+                </div>
+                <div class="navigation-tab" onclick="showSection('shop')">
+                    <i class="fas fa-shopping-cart mr-2"></i>Shop
+                </div>
+                <div class="navigation-tab" onclick="showSection('achievements')">
+                    <i class="fas fa-trophy mr-2"></i>Achievements
+                </div>
+                <div class="navigation-tab" onclick="showSection('breeding')">
+                    <i class="fas fa-heart mr-2"></i>Breeding
+                </div>
+                <div class="navigation-tab" onclick="showSection('stats')">
+                    <i class="fas fa-chart-bar mr-2"></i>Statistics
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Container -->
+        <main class="relative z-10 p-4">
+            <!-- Home Section -->
+            <div id="homeSection" class="section">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Current Pet Display -->
+                    <div class="pet-card p-6 col-span-full lg:col-span-2">
+                        <div class="text-center">
+                            <div id="currentPetAvatar" class="pet-avatar mx-auto mb-4">
                                 🐱
                             </div>
+                            <h2 id="currentPetName" class="text-2xl font-bold mb-2">Whiskers</h2>
+                            <div id="currentPetMood" class="pet-mood mb-4">😊</div>
+                            <p id="currentPetAge" class="text-gray-600 mb-4">Age: 3 months</p>
                             
-                            <!-- Pet Info -->
-                            <div class="text-center mt-4">
-                                <div class="evolution-stage mb-4">
-                                    <h3 class="font-bold">Evolution Stage</h3>
-                                    <p id="evolutionStage">Baby</p>
-                                    <div class="mt-2">
-                                        <div class="status-bar">
-                                            <div class="status-fill bg-purple-500" id="evolutionProgress" style="width: 10%"></div>
-                                        </div>
+                            <!-- Pet Status Bars -->
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Health</span>
+                                        <span id="healthValue">85/100</span>
+                                    </div>
+                                    <div class="status-bar">
+                                        <div id="healthBar" class="status-fill bg-green-500" style="width: 85%"></div>
                                     </div>
                                 </div>
                                 
-                                <div class="grid grid-cols-2 gap-4 text-sm">
-                                    <div>
-                                        <p class="font-semibold">Age: <span id="petAge">0 days</span></p>
-                                        <p class="font-semibold">Weight: <span id="petWeight">1.0 kg</span></p>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Hunger</span>
+                                        <span id="hungerValue">60/100</span>
                                     </div>
-                                    <div>
-                                        <p class="font-semibold">Type: <span id="petType">Cat</span></p>
-                                        <p class="font-semibold">Color: <span id="petColor">Orange</span></p>
+                                    <div class="status-bar">
+                                        <div id="hungerBar" class="status-fill bg-orange-500" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Happiness</span>
+                                        <span id="happinessValue">75/100</span>
+                                    </div>
+                                    <div class="status-bar">
+                                        <div id="happinessBar" class="status-fill bg-pink-500" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Energy</span>
+                                        <span id="energyValue">90/100</span>
+                                    </div>
+                                    <div class="status-bar">
+                                        <div id="energyBar" class="status-fill bg-blue-500" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Cleanliness</span>
+                                        <span id="cleanlinessValue">70/100</span>
+                                    </div>
+                                    <div class="status-bar">
+                                        <div id="cleanlinessBar" class="status-fill bg-cyan-500" style="width: 70%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span>Experience</span>
+                                        <span id="experienceValue">150/200</span>
+                                    </div>
+                                    <div class="experience-bar">
+                                        <div id="experienceBar" class="experience-fill" style="width: 75%"></div>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Action Buttons -->
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                                <button class="action-btn" onclick="feedPet()">
-                                    <i class="fas fa-utensils mb-2"></i><br>Feed
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="pet-card p-6">
+                        <h3 class="text-xl font-bold mb-4">Quick Actions</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="feedPet()" class="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-lg transition duration-300">
+                                <i class="fas fa-utensils mb-2 block text-xl"></i>
+                                Feed
+                            </button>
+                            <button onclick="playWithPet()" class="bg-green-500 hover:bg-green-600 text-white p-3 rounded-lg transition duration-300">
+                                <i class="fas fa-gamepad mb-2 block text-xl"></i>
+                                Play
+                            </button>
+                            <button onclick="cleanPet()" class="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg transition duration-300">
+                                <i class="fas fa-shower mb-2 block text-xl"></i>
+                                Clean
+                            </button>
+                            <button onclick="sleepPet()" class="bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-lg transition duration-300">
+                                <i class="fas fa-bed mb-2 block text-xl"></i>
+                                Sleep
+                            </button>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <button onclick="takeToVet()" class="w-full bg-red-500 hover:bg-red-600 text-white p-3 rounded-lg transition duration-300">
+                                <i class="fas fa-user-md mr-2"></i>Visit Veterinarian
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Daily Tasks -->
+                    <div class="pet-card p-6 col-span-full">
+                        <h3 class="text-xl font-bold mb-4">Daily Tasks</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gradient-to-r from-green-400 to-green-600 p-4 rounded-lg text-white">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-semibold">Feed 3 times</h4>
+                                        <p class="text-sm opacity-80">Progress: 2/3</p>
+                                    </div>
+                                    <i class="fas fa-utensils text-2xl"></i>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-r from-blue-400 to-blue-600 p-4 rounded-lg text-white">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-semibold">Play for 10 minutes</h4>
+                                        <p class="text-sm opacity-80">Progress: 7/10 min</p>
+                                    </div>
+                                    <i class="fas fa-gamepad text-2xl"></i>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-r from-purple-400 to-purple-600 p-4 rounded-lg text-white">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="font-semibold">Learn new trick</h4>
+                                        <p class="text-sm opacity-80">Progress: 0/1</p>
+                                    </div>
+                                    <i class="fas fa-graduation-cap text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pets Section -->
+            <div id="petsSection" class="section" style="display: none;">
+                <div class="mb-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">My Pet Collection</h2>
+                        <button onclick="adoptNewPet()" class="bg-gradient-to-r from-green-500 to-blue-600 text-white px-6 py-2 rounded-lg hover:from-green-600 hover:to-blue-700 transition duration-300">
+                            <i class="fas fa-plus mr-2"></i>Adopt New Pet
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="petCollection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Pet cards will be dynamically generated -->
+                </div>
+            </div>
+
+            <!-- Pet House Section -->
+            <div id="houseSection" class="section" style="display: none;">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Pet House Designer</h2>
+                    <div class="flex space-x-4 mb-4">
+                        <button onclick="switchRoom('bedroom')" class="navigation-tab" data-room="bedroom">
+                            <i class="fas fa-bed mr-2"></i>Bedroom
+                        </button>
+                        <button onclick="switchRoom('kitchen')" class="navigation-tab" data-room="kitchen">
+                            <i class="fas fa-utensils mr-2"></i>Kitchen
+                        </button>
+                        <button onclick="switchRoom('garden')" class="navigation-tab" data-room="garden">
+                            <i class="fas fa-seedling mr-2"></i>Garden
+                        </button>
+                        <button onclick="switchRoom('playroom')" class="navigation-tab active" data-room="playroom">
+                            <i class="fas fa-gamepad mr-2"></i>Playroom
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- Room Layout -->
+                    <div class="lg:col-span-3">
+                        <div class="pet-card p-6">
+                            <h3 class="text-lg font-bold mb-4" id="currentRoomTitle">Playroom</h3>
+                            <div id="roomLayout" class="grid grid-cols-5 gap-2 mb-4" style="min-height: 400px;">
+                                <!-- Room tiles will be generated dynamically -->
+                            </div>
+                            <div class="flex justify-between">
+                                <button onclick="saveRoomLayout()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                                    <i class="fas fa-save mr-2"></i>Save Layout
                                 </button>
-                                <button class="action-btn" onclick="cleanPet()">
-                                    <i class="fas fa-shower mb-2"></i><br>Clean
-                                </button>
-                                <button class="action-btn" onclick="playWithPet()">
-                                    <i class="fas fa-gamepad mb-2"></i><br>Play
-                                </button>
-                                <button class="action-btn" onclick="putPetToSleep()">
-                                    <i class="fas fa-bed mb-2"></i><br>Sleep
+                                <button onclick="clearRoom()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                                    <i class="fas fa-trash mr-2"></i>Clear Room
                                 </button>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Mini Games Section -->
-                    <div class="mt-8">
-                        <h3 class="text-2xl font-bold text-white mb-4">🎮 Mini Games</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="mini-game">
-                                <h4 class="font-bold mb-2">🧠 Memory Match</h4>
-                                <p class="text-sm text-gray-600 mb-3">Test your memory skills!</p>
-                                <button class="action-btn w-full" onclick="startMemoryGame()">Play</button>
+                    <!-- Furniture Inventory -->
+                    <div class="pet-card p-6">
+                        <h3 class="text-lg font-bold mb-4">Furniture</h3>
+                        <div id="furnitureInventory" class="grid grid-cols-2 gap-2">
+                            <!-- Furniture items will be generated dynamically -->
+                        </div>
+                        <button onclick="buyFurniture()" class="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                            <i class="fas fa-shopping-cart mr-2"></i>Buy Furniture
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Explore Section -->
+            <div id="exploreSection" class="section" style="display: none;">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Explore the World</h2>
+                    <p class="text-gray-600">Take your pet on adventures to different locations!</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="mini-game-card" onclick="exploreLocation('park')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🏞️</div>
+                            <h3 class="text-lg font-bold">City Park</h3>
+                            <p class="text-sm opacity-80">Meet other pets and play fetch</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-game-card" onclick="exploreLocation('beach')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🏖️</div>
+                            <h3 class="text-lg font-bold">Sunny Beach</h3>
+                            <p class="text-sm opacity-80">Dig for treasures and swim</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-game-card" onclick="exploreLocation('forest')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🌲</div>
+                            <h3 class="text-lg font-bold">Mystery Forest</h3>
+                            <p class="text-sm opacity-80">Hunt for rare items and berries</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-game-card" onclick="exploreLocation('city')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🏙️</div>
+                            <h3 class="text-lg font-bold">Downtown</h3>
+                            <p class="text-sm opacity-80">Shop and socialize</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Current Exploration -->
+                <div id="explorationArea" class="mt-8 pet-card p-6" style="display: none;">
+                    <div class="text-center">
+                        <div id="explorationIcon" class="text-6xl mb-4">🏞️</div>
+                        <h3 id="explorationTitle" class="text-2xl font-bold mb-4">Exploring City Park</h3>
+                        <div id="explorationContent">
+                            <div class="loading-spinner"></div>
+                            <p>Your pet is exploring...</p>
+                        </div>
+                        <button onclick="finishExploration()" class="mt-4 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                            Return Home
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mini Games Section -->
+            <div id="gamesSection" class="section" style="display: none;">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Mini Games</h2>
+                    <p class="text-gray-600">Play fun games with your pet to increase happiness and earn rewards!</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="mini-game-card" onclick="playGame('memory')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🧠</div>
+                            <h3 class="text-lg font-bold">Memory Match</h3>
+                            <p class="text-sm opacity-80">Test your memory skills</p>
+                            <div class="mt-2">
+                                <span class="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs">+10 Coins</span>
                             </div>
-                            <div class="mini-game">
-                                <h4 class="font-bold mb-2">🦴 Catch the Treat</h4>
-                                <p class="text-sm text-gray-600 mb-3">Help your pet catch falling treats!</p>
-                                <button class="action-btn w-full" onclick="startCatchGame()">Play</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-game-card" onclick="playGame('catch')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🎾</div>
+                            <h3 class="text-lg font-bold">Catch the Treat</h3>
+                            <p class="text-sm opacity-80">Quick reflexes game</p>
+                            <div class="mt-2">
+                                <span class="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs">+15 Coins</span>
                             </div>
-                            <div class="mini-game">
-                                <h4 class="font-bold mb-2">🧩 Puzzle Game</h4>
-                                <p class="text-sm text-gray-600 mb-3">Solve puzzles together!</p>
-                                <button class="action-btn w-full" onclick="startPuzzleGame()">Play</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-game-card" onclick="playGame('puzzle')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🧩</div>
+                            <h3 class="text-lg font-bold">Jigsaw Puzzle</h3>
+                            <p class="text-sm opacity-80">Solve pet pictures</p>
+                            <div class="mt-2">
+                                <span class="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs">+20 Coins</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-game-card" onclick="playGame('racing')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🏃</div>
+                            <h3 class="text-lg font-bold">Pet Racing</h3>
+                            <p class="text-sm opacity-80">Race against AI pets</p>
+                            <div class="mt-2">
+                                <span class="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs">+25 Coins</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-game-card" onclick="playGame('training')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">🎯</div>
+                            <h3 class="text-lg font-bold">Trick Training</h3>
+                            <p class="text-sm opacity-80">Teach your pet tricks</p>
+                            <div class="mt-2">
+                                <span class="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs">+30 Coins</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mini-game-card" onclick="playGame('talent')">
+                        <div class="text-center">
+                            <div class="text-4xl mb-2">⭐</div>
+                            <h3 class="text-lg font-bold">Talent Show</h3>
+                            <p class="text-sm opacity-80">Showcase pet abilities</p>
+                            <div class="mt-2">
+                                <span class="bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs">+50 Coins</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Sidebar -->
-                <div class="space-y-6">
-                    <!-- Status Panel -->
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">📊 Pet Status</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">❤️ Health</span>
-                                    <span class="text-sm" id="healthText">100%</span>
+                <!-- Game Area -->
+                <div id="gameArea" class="mt-8 pet-card p-6" style="display: none;">
+                    <div id="gameContent">
+                        <!-- Game content will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Section -->
+            <div id="socialSection" class="section" style="display: none;">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Social Hub</h2>
+                    <p class="text-gray-600">Connect with other pet owners and make friends!</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Friends List -->
+                    <div class="pet-card p-6">
+                        <h3 class="text-lg font-bold mb-4">Friends</h3>
+                        <div id="friendsList" class="space-y-3">
+                            <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                                <div class="w-10 h-10 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">A</div>
+                                <div class="flex-1">
+                                    <div class="font-semibold">Alice</div>
+                                    <div class="text-sm text-gray-600">Level 5 • Online</div>
                                 </div>
-                                <div class="status-bar">
-                                    <div class="status-fill health" id="healthBar" style="width: 100%"></div>
+                                <button class="text-blue-500 hover:text-blue-700">
+                                    <i class="fas fa-comment"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                                <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white font-bold">B</div>
+                                <div class="flex-1">
+                                    <div class="font-semibold">Bob</div>
+                                    <div class="text-sm text-gray-600">Level 8 • 2h ago</div>
+                                </div>
+                                <button class="text-blue-500 hover:text-blue-700">
+                                    <i class="fas fa-comment"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button onclick="findFriends()" class="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                            <i class="fas fa-user-plus mr-2"></i>Find Friends
+                        </button>
+                    </div>
+                    
+                    <!-- Leaderboards -->
+                    <div class="pet-card p-6">
+                        <h3 class="text-lg font-bold mb-4">Global Leaderboard</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between p-2 bg-yellow-100 rounded-lg">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-yellow-600 font-bold">🥇</span>
+                                    <span class="font-semibold">PetMaster99</span>
+                                </div>
+                                <span class="text-sm">Level 25</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-2 bg-gray-100 rounded-lg">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-gray-600 font-bold">🥈</span>
+                                    <span class="font-semibold">AnimalLover</span>
+                                </div>
+                                <span class="text-sm">Level 23</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-2 bg-orange-100 rounded-lg">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-orange-600 font-bold">🥉</span>
+                                    <span class="font-semibold">CutePets</span>
+                                </div>
+                                <span class="text-sm">Level 21</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="pet-card p-6">
+                        <h3 class="text-lg font-bold mb-4">Recent Activity</h3>
+                        <div id="activityFeed" class="space-y-3">
+                            <div class="social-notification">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-trophy text-yellow-600"></i>
+                                    <span class="text-sm">Alice's pet won a talent show!</span>
                                 </div>
                             </div>
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">🍽️ Hunger</span>
-                                    <span class="text-sm" id="hungerText">80%</span>
-                                </div>
-                                <div class="status-bar">
-                                    <div class="status-fill hunger" id="hungerBar" style="width: 80%"></div>
+                            
+                            <div class="social-notification">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-heart text-red-500"></i>
+                                    <span class="text-sm">Bob adopted a new hamster!</span>
                                 </div>
                             </div>
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">😊 Happiness</span>
-                                    <span class="text-sm" id="happinessText">75%</span>
-                                </div>
-                                <div class="status-bar">
-                                    <div class="status-fill happiness" id="happinessBar" style="width: 75%"></div>
+                            
+                            <div class="social-notification">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-star text-blue-500"></i>
+                                    <span class="text-sm">Your pet reached level 5!</span>
                                 </div>
                             </div>
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">🧼 Cleanliness</span>
-                                    <span class="text-sm" id="cleanlinessText">90%</span>
-                                </div>
-                                <div class="status-bar">
-                                    <div class="status-fill cleanliness" id="cleanlinessBar" style="width: 90%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Competitions -->
+                <div class="mt-6 pet-card p-6">
+                    <h3 class="text-xl font-bold mb-4">Weekly Competitions</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gradient-to-r from-purple-400 to-pink-400 p-4 rounded-lg text-white">
+                            <h4 class="font-bold">Cutest Pet Contest</h4>
+                            <p class="text-sm opacity-80">Ends in 3 days</p>
+                            <button class="mt-2 bg-white text-purple-600 px-3 py-1 rounded text-sm font-semibold">
+                                Enter Contest
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-green-400 to-blue-400 p-4 rounded-lg text-white">
+                            <h4 class="font-bold">Trick Championship</h4>
+                            <p class="text-sm opacity-80">Ends in 5 days</p>
+                            <button class="mt-2 bg-white text-green-600 px-3 py-1 rounded text-sm font-semibold">
+                                Enter Contest
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-orange-400 to-red-400 p-4 rounded-lg text-white">
+                            <h4 class="font-bold">Racing Tournament</h4>
+                            <p class="text-sm opacity-80">Ends in 1 week</p>
+                            <button class="mt-2 bg-white text-orange-600 px-3 py-1 rounded text-sm font-semibold">
+                                Enter Contest
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shop Section -->
+            <div id="shopSection" class="section" style="display: none;">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Pet Shop</h2>
+                    <div class="flex space-x-4">
+                        <button onclick="showShopCategory('food')" class="navigation-tab active" data-category="food">
+                            <i class="fas fa-apple-alt mr-2"></i>Food
+                        </button>
+                        <button onclick="showShopCategory('toys')" class="navigation-tab" data-category="toys">
+                            <i class="fas fa-gamepad mr-2"></i>Toys
+                        </button>
+                        <button onclick="showShopCategory('accessories')" class="navigation-tab" data-category="accessories">
+                            <i class="fas fa-gem mr-2"></i>Accessories
+                        </button>
+                        <button onclick="showShopCategory('furniture')" class="navigation-tab" data-category="furniture">
+                            <i class="fas fa-couch mr-2"></i>Furniture
+                        </button>
+                        <button onclick="showShopCategory('medicine')" class="navigation-tab" data-category="medicine">
+                            <i class="fas fa-pills mr-2"></i>Medicine
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="shopItems" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Shop items will be dynamically generated -->
+                </div>
+            </div>
+
+            <!-- Achievements Section -->
+            <div id="achievementsSection" class="section" style="display: none;">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Achievements</h2>
+                    <p class="text-gray-600">Unlock rewards by completing challenges and caring for your pets!</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="pet-card p-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="achievement-badge">🏆</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold">First Pet</h3>
+                                <p class="text-sm text-gray-600">Adopt your first virtual pet</p>
+                                <div class="mt-2">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Completed</span>
                                 </div>
                             </div>
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">⚡ Energy</span>
-                                    <span class="text-sm" id="energyText">85%</span>
-                                </div>
-                                <div class="status-bar">
-                                    <div class="status-fill energy" id="energyBar" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="pet-card p-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="achievement-badge">🍎</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold">Good Feeder</h3>
+                                <p class="text-sm text-gray-600">Feed your pet 100 times</p>
+                                <div class="mt-2">
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">75/100</span>
                                 </div>
                             </div>
-                            <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium">🧠 Intelligence</span>
-                                    <span class="text-sm" id="intelligenceText">60%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="pet-card p-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="achievement-badge">🎮</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold">Game Master</h3>
+                                <p class="text-sm text-gray-600">Win 50 mini-games</p>
+                                <div class="mt-2">
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 40%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">20/50</span>
                                 </div>
-                                <div class="status-bar">
-                                    <div class="status-fill intelligence" id="intelligenceBar" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pet-card p-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="achievement-badge">💰</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold">Coin Collector</h3>
+                                <p class="text-sm text-gray-600">Earn 10,000 coins</p>
+                                <div class="mt-2">
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Completed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pet-card p-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="achievement-badge">❤️</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold">Pet Lover</h3>
+                                <p class="text-sm text-gray-600">Keep happiness above 90% for 7 days</p>
+                                <div class="mt-2">
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 60%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">4/7 days</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pet-card p-6">
+                        <div class="flex items-center space-x-4">
+                            <div class="achievement-badge">🌟</div>
+                            <div class="flex-1">
+                                <h3 class="font-bold">Social Butterfly</h3>
+                                <p class="text-sm text-gray-600">Make 10 friends</p>
+                                <div class="mt-2">
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 20%"></div>
+                                    </div>
+                                    <span class="text-xs text-gray-600">2/10</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Breeding Section -->
+            <div id="breedingSection" class="section" style="display: none;">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Pet Breeding Center</h2>
+                    <p class="text-gray-600">Breed your pets to create unique offspring with special traits!</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Breeding Interface -->
+                    <div class="pet-card p-6">
+                        <h3 class="text-lg font-bold mb-4">Select Parents</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                <div id="parent1" class="mb-2">
+                                    <div class="text-4xl mb-2">➕</div>
+                                    <p class="text-sm text-gray-600">Select Parent 1</p>
+                                </div>
+                            </div>
+                            
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                <div id="parent2" class="mb-2">
+                                    <div class="text-4xl mb-2">➕</div>
+                                    <p class="text-sm text-gray-600">Select Parent 2</p>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Stats Chart -->
-                        <div class="mt-6">
-                            <canvas id="statsChart" class="pet-stats-chart"></canvas>
+                        <div class="text-center mb-4">
+                            <div class="breeding-animation text-4xl mb-2">💕</div>
+                            <button onclick="startBreeding()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg transition duration-300 disabled:opacity-50" disabled>
+                                <i class="fas fa-heart mr-2"></i>Start Breeding
+                            </button>
+                        </div>
+                        
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Breeding Requirements:</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Both pets must be adults (6+ months)</li>
+                                <li>• Both pets must have 80+ happiness</li>
+                                <li>• Breeding costs 500 coins</li>
+                                <li>• Gestation period: 24 hours</li>
+                            </ul>
                         </div>
                     </div>
                     
-                    <!-- Quick Actions -->
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">⚡ Quick Actions</h3>
-                        <div class="space-y-3">
-                            <button class="action-btn w-full" onclick="openShop()">
-                                <i class="fas fa-shopping-cart mr-2"></i>Pet Shop
-                            </button>
-                            <button class="action-btn w-full" onclick="openCustomization()">
-                                <i class="fas fa-palette mr-2"></i>Customize
-                            </button>
-                            <button class="action-btn w-full" onclick="openAchievements()">
-                                <i class="fas fa-trophy mr-2"></i>Achievements
-                            </button>
-                            <button class="action-btn w-full" onclick="visitVet()">
-                                <i class="fas fa-user-md mr-2"></i>Vet Visit
-                            </button>
-                            <button class="action-btn w-full" onclick="trainPet()">
-                                <i class="fas fa-graduation-cap mr-2"></i>Training
-                            </button>
+                    <!-- Genetics Preview -->
+                    <div class="pet-card p-6">
+                        <h3 class="text-lg font-bold mb-4">Offspring Preview</h3>
+                        
+                        <div class="text-center mb-6">
+                            <div class="w-24 h-24 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
+                                ❓
+                            </div>
+                            <p class="text-gray-600">Select two parents to see potential offspring</p>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-green-50 p-3 rounded-lg">
+                                <h4 class="font-semibold text-green-800">Possible Traits:</h4>
+                                <div class="flex flex-wrap gap-2 mt-2">
+                                    <span class="bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Playful</span>
+                                    <span class="bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Intelligent</span>
+                                    <span class="bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Loyal</span>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-purple-50 p-3 rounded-lg">
+                                <h4 class="font-semibold text-purple-800">Rare Combinations:</h4>
+                                <p class="text-sm text-purple-600 mt-1">Cat + Dog = 5% chance for unique "Cog" hybrid</p>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Achievements Preview -->
-                    <div class="bg-white rounded-xl p-6 shadow-lg">
-                        <h3 class="text-xl font-bold mb-4">🏆 Recent Achievements</h3>
-                        <div id="recentAchievements">
-                            <div class="achievement">
-                                <i class="fas fa-baby text-pink-500 mr-2"></i>
-                                <strong>First Pet</strong><br>
-                                <small>Adopted your first virtual pet!</small>
+                </div>
+                
+                <!-- Breeding History -->
+                <div class="mt-6 pet-card p-6">
+                    <h3 class="text-lg font-bold mb-4">Breeding History & Nursery</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gradient-to-r from-blue-100 to-purple-100 p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold">Fluffy Jr.</h4>
+                                <span class="text-sm text-gray-600">2 weeks old</span>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl mb-2">🐱</div>
+                                <p class="text-sm">Parents: Whiskers × Snowball</p>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-green-100 to-blue-100 p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="font-semibold">Buddy II</h4>
+                                <span class="text-sm text-gray-600">1 month old</span>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl mb-2">🐶</div>
+                                <p class="text-sm">Parents: Rex × Luna</p>
+                            </div>
+                        </div>
+                        
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <div class="text-2xl mb-2">🥚</div>
+                            <p class="text-sm text-gray-600">Hatching in 8 hours</p>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                <div class="bg-pink-600 h-2 rounded-full" style="width: 65%"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- Pet Shop Modal -->
-    <div id="shopModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold">🛒 Pet Shop</h2>
-                <button onclick="closeModal('shopModal')" class="text-2xl">&times;</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="shop-item">
-                    <div class="text-3xl mb-2">🍎</div>
-                    <h4 class="font-bold">Premium Food</h4>
-                    <p class="text-sm text-gray-600">Nutritious meal (+30 hunger)</p>
-                    <div class="flex justify-between items-center mt-3">
-                        <span class="font-bold text-yellow-600">25 🪙</span>
-                        <button class="action-btn" onclick="buyItem('premium_food', 25)">Buy</button>
-                    </div>
+
+            <!-- Statistics Section -->
+            <div id="statsSection" class="section" style="display: none;">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Statistics & Analytics</h2>
+                    <p class="text-gray-600">Track your pet care performance and progress over time</p>
                 </div>
-                <div class="shop-item">
-                    <div class="text-3xl mb-2">🧸</div>
-                    <h4 class="font-bold">Toy Bear</h4>
-                    <p class="text-sm text-gray-600">Fun toy (+20 happiness)</p>
-                    <div class="flex justify-between items-center mt-3">
-                        <span class="font-bold text-yellow-600">50 🪙</span>
-                        <button class="action-btn" onclick="buyItem('toy_bear', 50)">Buy</button>
-                    </div>
-                </div>
-                <div class="shop-item">
-                    <div class="text-3xl mb-2">🎀</div>
-                    <h4 class="font-bold">Bow Tie</h4>
-                    <p class="text-sm text-gray-600">Stylish accessory</p>
-                    <div class="flex justify-between items-center mt-3">
-                        <span class="font-bold text-yellow-600">75 🪙</span>
-                        <button class="action-btn" onclick="buyItem('bow_tie', 75)">Buy</button>
-                    </div>
-                </div>
-                <div class="shop-item">
-                    <div class="text-3xl mb-2">💊</div>
-                    <h4 class="font-bold">Health Potion</h4>
-                    <p class="text-sm text-gray-600">Restores health (+50 health)</p>
-                    <div class="flex justify-between items-center mt-3">
-                        <span class="font-bold text-yellow-600">100 🪙</span>
-                        <button class="action-btn" onclick="buyItem('health_potion', 100)">Buy</button>
-                    </div>
-                </div>
-                <div class="shop-item">
-                    <div class="text-3xl mb-2">🏠</div>
-                    <h4 class="font-bold">Luxury Home</h4>
-                    <p class="text-sm text-gray-600">Upgrade environment</p>
-                    <div class="flex justify-between items-center mt-3">
-                        <span class="font-bold text-yellow-600">200 🪙</span>
-                        <button class="action-btn" onclick="buyItem('luxury_home', 200)">Buy</button>
-                    </div>
-                </div>
-                <div class="shop-item">
-                    <div class="text-3xl mb-2">📚</div>
-                    <h4 class="font-bold">Training Book</h4>
-                    <p class="text-sm text-gray-600">Increase intelligence (+25 IQ)</p>
-                    <div class="flex justify-between items-center mt-3">
-                        <span class="font-bold text-yellow-600">80 🪙</span>
-                        <button class="action-btn" onclick="buyItem('training_book', 80)">Buy</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Customization Modal -->
-    <div id="customizationModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold">🎨 Customize Your Pet</h2>
-                <button onclick="closeModal('customizationModal')" class="text-2xl">&times;</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Pet Name</h3>
-                    <input type="text" id="customPetName" class="w-full p-3 border rounded-lg" placeholder="Enter pet name">
-                    
-                    <h3 class="text-xl font-bold mb-4 mt-6">Pet Color</h3>
-                    <div class="grid grid-cols-4 gap-3">
-                        <button class="w-12 h-12 rounded-full bg-orange-500" onclick="changePetColor('orange')"></button>
-                        <button class="w-12 h-12 rounded-full bg-gray-500" onclick="changePetColor('gray')"></button>
-                        <button class="w-12 h-12 rounded-full bg-brown-500" onclick="changePetColor('brown')"></button>
-                        <button class="w-12 h-12 rounded-full bg-black" onclick="changePetColor('black')"></button>
-                        <button class="w-12 h-12 rounded-full bg-white border" onclick="changePetColor('white')"></button>
-                        <button class="w-12 h-12 rounded-full bg-yellow-500" onclick="changePetColor('yellow')"></button>
-                        <button class="w-12 h-12 rounded-full bg-pink-500" onclick="changePetColor('pink')"></button>
-                        <button class="w-12 h-12 rounded-full bg-blue-500" onclick="changePetColor('blue')"></button>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Pet Care Stats -->
+                    <div class="pet-card p-6">
+                        <h3 class="text-lg font-bold mb-4">Pet Care Statistics</h3>
+                        <canvas id="careChart" width="400" height="200"></canvas>
                     </div>
                     
-                    <h3 class="text-xl font-bold mb-4 mt-6">Environment</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button class="action-btn" onclick="changeEnvironment('park')">🌳 Park</button>
-                        <button class="action-btn" onclick="changeEnvironment('beach')">🏖️ Beach</button>
-                        <button class="action-btn" onclick="changeEnvironment('garden')">🌺 Garden</button>
-                        <button class="action-btn" onclick="changeEnvironment('space')">🚀 Space</button>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold mb-4">Accessories</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button class="action-btn" onclick="toggleAccessory('hat')">🎩 Hat</button>
-                        <button class="action-btn" onclick="toggleAccessory('glasses')">🕶️ Glasses</button>
-                        <button class="action-btn" onclick="toggleAccessory('bow')">🎀 Bow</button>
-                        <button class="action-btn" onclick="toggleAccessory('collar')">📿 Collar</button>
+                    <!-- Activity Timeline -->
+                    <div class="pet-card p-6">
+                        <h3 class="text-lg font-bold mb-4">Weekly Activity</h3>
+                        <canvas id="activityChart" width="400" height="200"></canvas>
                     </div>
                     
-                    <div class="mt-8">
-                        <button class="action-btn w-full" onclick="saveCustomization()">
-                            <i class="fas fa-save mr-2"></i>Save Changes
-                        </button>
+                    <!-- Overall Stats -->
+                    <div class="pet-card p-6 col-span-full">
+                        <h3 class="text-lg font-bold mb-4">Overall Performance</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-blue-600">156</div>
+                                <div class="text-sm text-gray-600">Total Feedings</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-green-600">89</div>
+                                <div class="text-sm text-gray-600">Games Played</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-purple-600">34</div>
+                                <div class="text-sm text-gray-600">Days Active</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-yellow-600">12,450</div>
+                                <div class="text-sm text-gray-600">Coins Earned</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
-    
-    <!-- Achievements Modal -->
-    <div id="achievementsModal" class="modal hidden">
+
+    <!-- Notifications -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Modals -->
+    <div id="modalOverlay" class="modal" style="display: none;">
         <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold">🏆 Achievements</h2>
-                <button onclick="closeModal('achievementsModal')" class="text-2xl">&times;</button>
-            </div>
-            <div id="achievementsList" class="space-y-4">
-                <!-- Achievements will be populated by JavaScript -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- Memory Game Modal -->
-    <div id="memoryGameModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold">🧠 Memory Match Game</h2>
-                <button onclick="closeModal('memoryGameModal')" class="text-2xl">&times;</button>
-            </div>
-            <div class="text-center mb-4">
-                <p>Score: <span id="memoryScore">0</span> | Moves: <span id="memoryMoves">0</span></p>
-            </div>
-            <div class="game-grid" id="memoryGameGrid">
-                <!-- Game cards will be generated by JavaScript -->
-            </div>
-            <div class="text-center mt-4">
-                <button class="action-btn" onclick="resetMemoryGame()">Reset Game</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Catch Game Modal -->
-    <div id="catchGameModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold">🦴 Catch the Treat</h2>
-                <button onclick="closeModal('catchGameModal')" class="text-2xl">&times;</button>
-            </div>
-            <div class="text-center mb-4">
-                <p>Score: <span id="catchScore">0</span> | Lives: <span id="catchLives">3</span></p>
-            </div>
-            <div id="catchGameArea" style="height: 400px; background: #e2e8f0; border-radius: 10px; position: relative; overflow: hidden;">
-                <div id="catcher" style="width: 60px; height: 60px; background: #667eea; border-radius: 50%; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🐱</div>
-            </div>
-            <div class="text-center mt-4">
-                <button class="action-btn" id="startCatchBtn" onclick="startCatchGameplay()">Start Game</button>
-                <button class="action-btn" onclick="resetCatchGame()">Reset</button>
+            <div id="modalContent">
+                <!-- Modal content will be dynamically generated -->
             </div>
         </div>
     </div>
@@ -815,975 +1226,1252 @@
     <script>
         // Game State
         let gameState = {
-            selectedPet: null,
-            petStats: {
-                health: 100,
-                hunger: 80,
-                happiness: 75,
-                cleanliness: 90,
-                energy: 85,
-                intelligence: 60
-            },
-            petInfo: {
-                name: 'Your Pet',
-                type: 'cat',
-                color: 'orange',
-                age: 0,
-                weight: 1.0,
-                evolutionStage: 'baby',
-                evolutionProgress: 10,
-                accessories: [],
-                environment: 'park'
-            },
-            gameData: {
-                coins: 100,
+            user: null,
+            currentPet: {
+                name: "Whiskers",
+                type: "cat",
+                emoji: "🐱",
+                age: 3,
                 level: 1,
-                experience: 0,
-                achievements: ['first_pet'],
-                inventory: [],
-                totalPlayTime: 0
+                experience: 150,
+                maxExperience: 200,
+                health: 85,
+                hunger: 60,
+                happiness: 75,
+                energy: 90,
+                cleanliness: 70,
+                mood: "happy",
+                traits: ["playful", "curious"],
+                lastFed: Date.now() - 2 * 60 * 60 * 1000,
+                lastPlayed: Date.now() - 1 * 60 * 60 * 1000,
+                lastCleaned: Date.now() - 4 * 60 * 60 * 1000,
+                lastSlept: Date.now() - 8 * 60 * 60 * 1000
             },
-            gameSettings: {
-                isDay: true,
-                weather: 'sunny',
-                gameSpeed: 1
-            }
+            pets: [],
+            coins: 1000,
+            level: 1,
+            achievements: [],
+            inventory: {
+                food: ['kibble', 'treats', 'premium_food'],
+                toys: ['ball', 'rope', 'mouse_toy'],
+                accessories: ['collar', 'hat'],
+                furniture: ['bed', 'food_bowl', 'toy_box']
+            },
+            house: {
+                bedroom: {},
+                kitchen: {},
+                garden: {},
+                playroom: {}
+            },
+            friends: [],
+            currentRoom: 'playroom',
+            timeOfDay: 'day',
+            weather: 'sunny'
         };
-        
-        // Pet Types Data
-        const petTypes = {
-            cat: { emoji: '🐱', traits: ['Curious', 'Agile', 'Sleepy'], baseStats: { hunger: -2, happiness: +1, energy: -1 } },
-            dog: { emoji: '🐕', traits: ['Loyal', 'Energetic', 'Friendly'], baseStats: { hunger: -3, happiness: +2, energy: -2 } },
-            bird: { emoji: '🦜', traits: ['Smart', 'Social', 'Musical'], baseStats: { intelligence: +2, happiness: +1, hunger: -1 } },
-            fish: { emoji: '🐠', traits: ['Peaceful', 'Graceful', 'Zen'], baseStats: { cleanliness: +1, happiness: +1, hunger: -1 } },
-            hamster: { emoji: '🐹', traits: ['Tiny', 'Active', 'Cute'], baseStats: { energy: +1, happiness: +2, hunger: -2 } },
-            rabbit: { emoji: '🐰', traits: ['Gentle', 'Quick', 'Soft'], baseStats: { happiness: +1, cleanliness: +1, hunger: -1 } }
-        };
-        
-        // Achievement definitions
-        const achievements = {
-            first_pet: { name: 'First Pet', description: 'Adopted your first virtual pet!', icon: '🐾', unlocked: true },
-            happy_pet: { name: 'Happy Pet', description: 'Keep happiness above 90% for 5 minutes', icon: '😊', unlocked: false },
-            healthy_pet: { name: 'Healthy Pet', description: 'Maintain perfect health for 24 hours', icon: '❤️', unlocked: false },
-            smart_pet: { name: 'Smart Pet', description: 'Raise intelligence to 100%', icon: '🧠', unlocked: false },
-            game_master: { name: 'Game Master', description: 'Win 10 mini-games', icon: '🎮', unlocked: false },
-            wealthy_owner: { name: 'Wealthy Owner', description: 'Accumulate 1000 coins', icon: '💰', unlocked: false },
-            pet_evolution: { name: 'Evolution Master', description: 'Evolve your pet to adult stage', icon: '🌟', unlocked: false }
-        };
-        
-        // Weather patterns
-        const weatherPatterns = ['sunny', 'cloudy', 'rainy', 'snowy'];
-        const weatherIcons = {
-            sunny: '☀️',
-            cloudy: '☁️',
-            rainy: '🌧️',
-            snowy: '❄️'
-        };
-        
-        // Initialize Game
+
+        // Initialize game
         document.addEventListener('DOMContentLoaded', function() {
-            loadGameState();
-            initializeWeather();
-            initializeDayNightCycle();
+            checkLogin();
+            initializeGame();
             startGameLoop();
-            updateDisplay();
+            initializeCharts();
         });
-        
-        // Pet Selection
-        function confirmPetSelection() {
-            const selectedCard = document.querySelector('.pet-card.selected');
-            if (!selectedCard) {
-                showNotification('Please select a pet first!', 'warning');
-                return;
+
+        // Authentication functions
+        function checkLogin() {
+            const savedUser = localStorage.getItem('petverse_user');
+            if (savedUser) {
+                gameState.user = JSON.parse(savedUser);
+                showGameScreen();
+            } else {
+                showLoginScreen();
             }
-            
-            gameState.selectedPet = selectedCard.dataset.pet;
-            gameState.petInfo.type = gameState.selectedPet;
-            gameState.petInfo.name = capitalizeFirst(gameState.selectedPet);
-            
-            document.getElementById('petSelectionScreen').classList.add('hidden');
-            document.getElementById('gameScreen').classList.remove('hidden');
-            
-            updatePetDisplay();
-            initializeStatsChart();
-            showNotification('Welcome to your new pet adventure!', 'success');
-            unlockAchievement('first_pet');
         }
-        
-        // Pet card selection
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.pet-card')) {
-                document.querySelectorAll('.pet-card').forEach(card => card.classList.remove('selected'));
-                e.target.closest('.pet-card').classList.add('selected');
+
+        function showLogin() {
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('registerForm').style.display = 'none';
+        }
+
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (username && password) {
+                const user = { username, coins: 1000, level: 1 };
+                gameState.user = user;
+                localStorage.setItem('petverse_user', JSON.stringify(user));
+                showGameScreen();
+                showNotification('Welcome back, ' + username + '!', 'success');
+            } else {
+                showNotification('Please enter username and password', 'error');
             }
-        });
-        
-        // Pet Actions
+        }
+
+        function register() {
+            const username = document.getElementById('registerUsername').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            
+            if (username && email && password) {
+                const user = { username, email, coins: 1000, level: 1 };
+                gameState.user = user;
+                localStorage.setItem('petverse_user', JSON.stringify(user));
+                showGameScreen();
+                showNotification('Account created successfully! Welcome to PetVerse!', 'success');
+            } else {
+                showNotification('Please fill in all fields', 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('petverse_user');
+            gameState.user = null;
+            showLoginScreen();
+            showNotification('Logged out successfully', 'info');
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('gameScreen').style.display = 'none';
+        }
+
+        function showGameScreen() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            updateUI();
+        }
+
+        // Navigation functions
+        function showSection(sectionName) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.style.display = 'none');
+            
+            // Show selected section
+            document.getElementById(sectionName + 'Section').style.display = 'block';
+            
+            // Update navigation tabs
+            const tabs = document.querySelectorAll('.navigation-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Load section-specific content
+            switch(sectionName) {
+                case 'pets':
+                    loadPetCollection();
+                    break;
+                case 'house':
+                    loadHouseDesigner();
+                    break;
+                case 'shop':
+                    loadShop();
+                    break;
+                case 'stats':
+                    updateCharts();
+                    break;
+            }
+        }
+
+        // Pet care functions
         function feedPet() {
-            if (gameState.petStats.hunger >= 95) {
-                showNotification('Your pet is already full!', 'info');
-                return;
+            if (gameState.currentPet.hunger < 100) {
+                gameState.currentPet.hunger = Math.min(100, gameState.currentPet.hunger + 25);
+                gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 10);
+                gameState.currentPet.lastFed = Date.now();
+                gainExperience(5);
+                showFloatingHearts();
+                showNotification(gameState.currentPet.name + ' enjoyed the meal!', 'success');
+                updatePetMood();
+                updateUI();
+            } else {
+                showNotification(gameState.currentPet.name + ' is not hungry right now', 'info');
             }
-            
-            gameState.petStats.hunger = Math.min(100, gameState.petStats.hunger + 25);
-            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 5);
-            addExperience(10);
-            spendCoins(5);
-            
-            animatePet('happy');
-            showFloatingText('❤️');
-            showNotification('Your pet enjoyed the meal!', 'success');
-            updateDisplay();
-            saveGameState();
         }
-        
-        function cleanPet() {
-            if (gameState.petStats.cleanliness >= 95) {
-                showNotification('Your pet is already clean!', 'info');
-                return;
-            }
-            
-            gameState.petStats.cleanliness = Math.min(100, gameState.petStats.cleanliness + 30);
-            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 10);
-            addExperience(8);
-            
-            animatePet('happy');
-            showFloatingText('✨');
-            showNotification('Your pet feels fresh and clean!', 'success');
-            updateDisplay();
-            saveGameState();
-        }
-        
+
         function playWithPet() {
-            if (gameState.petStats.energy < 20) {
-                showNotification('Your pet is too tired to play!', 'warning');
-                return;
-            }
-            
-            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 20);
-            gameState.petStats.energy = Math.max(0, gameState.petStats.energy - 15);
-            gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 5);
-            addExperience(15);
-            
-            animatePet('happy');
-            showFloatingText('🎉');
-            showNotification('Your pet had a great time playing!', 'success');
-            updateDisplay();
-            saveGameState();
-        }
-        
-        function putPetToSleep() {
-            if (gameState.petStats.energy >= 95) {
-                showNotification('Your pet is not tired!', 'info');
-                return;
-            }
-            
-            gameState.petStats.energy = Math.min(100, gameState.petStats.energy + 40);
-            gameState.petStats.health = Math.min(100, gameState.petStats.health + 10);
-            addExperience(5);
-            
-            animatePet('sleep');
-            showFloatingText('💤');
-            showNotification('Your pet had a restful sleep!', 'success');
-            updateDisplay();
-            saveGameState();
-        }
-        
-        function petPet() {
-            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 3);
-            addExperience(2);
-            
-            animatePet('happy');
-            showFloatingText('❤️');
-            updateDisplay();
-        }
-        
-        // Pet Animation
-        function animatePet(type) {
-            const petSprite = document.getElementById('petSprite');
-            petSprite.classList.remove('happy');
-            
-            if (type === 'happy') {
-                petSprite.classList.add('happy');
-                setTimeout(() => petSprite.classList.remove('happy'), 600);
+            if (gameState.currentPet.energy > 20) {
+                gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 20);
+                gameState.currentPet.energy = Math.max(0, gameState.currentPet.energy - 20);
+                gameState.currentPet.lastPlayed = Date.now();
+                gainExperience(10);
+                showFloatingHearts();
+                showNotification(gameState.currentPet.name + ' had a great time playing!', 'success');
+                updatePetMood();
+                updateUI();
+            } else {
+                showNotification(gameState.currentPet.name + ' is too tired to play', 'info');
             }
         }
-        
-        function showFloatingText(emoji) {
-            const petContainer = document.querySelector('.pet-container');
-            const floatingText = document.createElement('div');
-            floatingText.className = 'floating-hearts';
-            floatingText.textContent = emoji;
-            floatingText.style.left = Math.random() * 200 + 100 + 'px';
-            floatingText.style.top = '150px';
+
+        function cleanPet() {
+            if (gameState.currentPet.cleanliness < 100) {
+                gameState.currentPet.cleanliness = Math.min(100, gameState.currentPet.cleanliness + 30);
+                gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 5);
+                gameState.currentPet.lastCleaned = Date.now();
+                gainExperience(5);
+                showNotification(gameState.currentPet.name + ' feels fresh and clean!', 'success');
+                updatePetMood();
+                updateUI();
+            } else {
+                showNotification(gameState.currentPet.name + ' is already clean', 'info');
+            }
+        }
+
+        function sleepPet() {
+            if (gameState.currentPet.energy < 100) {
+                gameState.currentPet.energy = Math.min(100, gameState.currentPet.energy + 40);
+                gameState.currentPet.lastSlept = Date.now();
+                showNotification(gameState.currentPet.name + ' had a good nap!', 'success');
+                updatePetMood();
+                updateUI();
+            } else {
+                showNotification(gameState.currentPet.name + ' is not tired right now', 'info');
+            }
+        }
+
+        function takeToVet() {
+            if (gameState.coins >= 50) {
+                gameState.coins -= 50;
+                gameState.currentPet.health = 100;
+                showNotification('Veterinary visit complete! ' + gameState.currentPet.name + ' is in perfect health!', 'success');
+                updateUI();
+            } else {
+                showNotification('You need 50 coins for a vet visit', 'error');
+            }
+        }
+
+        // Game mechanics
+        function gainExperience(amount) {
+            gameState.currentPet.experience += amount;
+            if (gameState.currentPet.experience >= gameState.currentPet.maxExperience) {
+                levelUp();
+            }
+        }
+
+        function levelUp() {
+            gameState.currentPet.level++;
+            gameState.currentPet.experience = 0;
+            gameState.currentPet.maxExperience = gameState.currentPet.level * 100;
+            gameState.coins += gameState.currentPet.level * 50;
+            showNotification(gameState.currentPet.name + ' leveled up! Level ' + gameState.currentPet.level, 'success');
+        }
+
+        function updatePetMood() {
+            const avg = (gameState.currentPet.health + gameState.currentPet.hunger + 
+                        gameState.currentPet.happiness + gameState.currentPet.energy + 
+                        gameState.currentPet.cleanliness) / 5;
             
-            petContainer.appendChild(floatingText);
+            if (avg >= 80) {
+                gameState.currentPet.mood = 'happy';
+                document.getElementById('currentPetMood').textContent = '😊';
+            } else if (avg >= 60) {
+                gameState.currentPet.mood = 'neutral';
+                document.getElementById('currentPetMood').textContent = '😐';
+            } else if (avg >= 40) {
+                gameState.currentPet.mood = 'sad';
+                document.getElementById('currentPetMood').textContent = '😢';
+            } else {
+                gameState.currentPet.mood = 'sick';
+                document.getElementById('currentPetMood').textContent = '😷';
+            }
+        }
+
+        function showFloatingHearts() {
+            const avatar = document.getElementById('currentPetAvatar');
+            const hearts = document.createElement('div');
+            hearts.className = 'floating-hearts';
+            hearts.textContent = '💕';
+            hearts.style.position = 'absolute';
+            hearts.style.left = Math.random() * 100 + 'px';
+            hearts.style.top = Math.random() * 100 + 'px';
+            avatar.appendChild(hearts);
             
             setTimeout(() => {
-                if (petContainer.contains(floatingText)) {
-                    petContainer.removeChild(floatingText);
+                if (hearts.parentNode) {
+                    hearts.parentNode.removeChild(hearts);
                 }
             }, 2000);
         }
-        
-        // Display Updates
-        function updateDisplay() {
-            updateStatusBars();
-            updatePetDisplay();
-            updateUI();
-            updateMood();
-            checkEvolution();
-            checkAchievements();
-        }
-        
-        function updateStatusBars() {
-            const stats = ['health', 'hunger', 'happiness', 'cleanliness', 'energy', 'intelligence'];
-            
-            stats.forEach(stat => {
-                const value = gameState.petStats[stat];
-                const bar = document.getElementById(stat + 'Bar');
-                const text = document.getElementById(stat + 'Text');
-                
-                if (bar && text) {
-                    bar.style.width = value + '%';
-                    text.textContent = Math.round(value) + '%';
-                }
-            });
-            
-            updateStatsChart();
-        }
-        
-        function updatePetDisplay() {
-            if (!gameState.selectedPet) return;
-            
-            const petSprite = document.getElementById('petSprite');
-            const petName = document.getElementById('petName');
-            const petType = document.getElementById('petType');
-            const petAge = document.getElementById('petAge');
-            const petWeight = document.getElementById('petWeight');
-            const petColor = document.getElementById('petColor');
-            const evolutionStage = document.getElementById('evolutionStage');
-            const evolutionProgress = document.getElementById('evolutionProgress');
-            
-            if (petSprite) petSprite.textContent = petTypes[gameState.selectedPet].emoji;
-            if (petName) petName.textContent = gameState.petInfo.name;
-            if (petType) petType.textContent = capitalizeFirst(gameState.petInfo.type);
-            if (petAge) petAge.textContent = gameState.petInfo.age + ' days';
-            if (petWeight) petWeight.textContent = gameState.petInfo.weight.toFixed(1) + ' kg';
-            if (petColor) petColor.textContent = capitalizeFirst(gameState.petInfo.color);
-            if (evolutionStage) evolutionStage.textContent = capitalizeFirst(gameState.petInfo.evolutionStage);
-            if (evolutionProgress) evolutionProgress.style.width = gameState.petInfo.evolutionProgress + '%';
-        }
-        
+
+        // UI update functions
         function updateUI() {
-            document.getElementById('coins').textContent = gameState.gameData.coins;
-            document.getElementById('level').textContent = gameState.gameData.level;
-            document.getElementById('experience').textContent = gameState.gameData.experience + '/100';
-        }
-        
-        function updateMood() {
-            const petMood = document.getElementById('petMood');
-            const avgMood = (gameState.petStats.happiness + gameState.petStats.health + gameState.petStats.energy) / 3;
+            // Update pet display
+            document.getElementById('currentPetName').textContent = gameState.currentPet.name;
+            document.getElementById('currentPetAvatar').textContent = gameState.currentPet.emoji;
+            document.getElementById('currentPetAge').textContent = 'Age: ' + gameState.currentPet.age + ' months';
             
-            let mood = 'Neutral';
-            if (avgMood >= 80) mood = 'Very Happy';
-            else if (avgMood >= 60) mood = 'Happy';
-            else if (avgMood >= 40) mood = 'Okay';
-            else if (avgMood >= 20) mood = 'Sad';
-            else mood = 'Very Sad';
+            // Update status bars
+            updateStatusBar('health', gameState.currentPet.health);
+            updateStatusBar('hunger', gameState.currentPet.hunger);
+            updateStatusBar('happiness', gameState.currentPet.happiness);
+            updateStatusBar('energy', gameState.currentPet.energy);
+            updateStatusBar('cleanliness', gameState.currentPet.cleanliness);
             
-            if (petMood) petMood.textContent = 'Feeling ' + mood;
-        }
-        
-        // Stats Chart
-        function initializeStatsChart() {
-            const ctx = document.getElementById('statsChart').getContext('2d');
+            // Update experience
+            const expPercent = (gameState.currentPet.experience / gameState.currentPet.maxExperience) * 100;
+            document.getElementById('experienceBar').style.width = expPercent + '%';
+            document.getElementById('experienceValue').textContent = 
+                gameState.currentPet.experience + '/' + gameState.currentPet.maxExperience;
             
-            window.statsChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Health', 'Hunger', 'Happiness', 'Cleanliness', 'Energy', 'Intelligence'],
-                    datasets: [{
-                        label: 'Pet Stats',
-                        data: [
-                            gameState.petStats.health,
-                            gameState.petStats.hunger,
-                            gameState.petStats.happiness,
-                            gameState.petStats.cleanliness,
-                            gameState.petStats.energy,
-                            gameState.petStats.intelligence
-                        ],
-                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                        borderColor: 'rgba(102, 126, 234, 1)',
-                        borderWidth: 2,
-                        pointBackgroundColor: 'rgba(102, 126, 234, 1)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            max: 100,
-                            ticks: {
-                                stepSize: 20
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
+            // Update user stats
+            document.getElementById('userCoins').textContent = gameState.coins;
+            document.getElementById('userLevel').textContent = gameState.currentPet.level;
         }
-        
-        function updateStatsChart() {
-            if (window.statsChart) {
-                window.statsChart.data.datasets[0].data = [
-                    gameState.petStats.health,
-                    gameState.petStats.hunger,
-                    gameState.petStats.happiness,
-                    gameState.petStats.cleanliness,
-                    gameState.petStats.energy,
-                    gameState.petStats.intelligence
-                ];
-                window.statsChart.update();
-            }
+
+        function updateStatusBar(stat, value) {
+            const bar = document.getElementById(stat + 'Bar');
+            const valueSpan = document.getElementById(stat + 'Value');
+            bar.style.width = value + '%';
+            valueSpan.textContent = value + '/100';
         }
-        
-        // Shop System
-        function openShop() {
-            document.getElementById('shopModal').classList.remove('hidden');
-        }
-        
-        function buyItem(itemId, cost) {
-            if (gameState.gameData.coins < cost) {
-                showNotification('Not enough coins!', 'warning');
-                return;
-            }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification show';
             
-            gameState.gameData.coins -= cost;
-            gameState.gameData.inventory.push(itemId);
-            
-            // Apply item effects
-            switch(itemId) {
-                case 'premium_food':
-                    gameState.petStats.hunger = Math.min(100, gameState.petStats.hunger + 30);
+            // Set color based on type
+            switch(type) {
+                case 'success':
+                    notification.style.background = 'linear-gradient(45deg, #10B981, #059669)';
                     break;
-                case 'toy_bear':
-                    gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 20);
+                case 'error':
+                    notification.style.background = 'linear-gradient(45deg, #EF4444, #DC2626)';
                     break;
-                case 'health_potion':
-                    gameState.petStats.health = Math.min(100, gameState.petStats.health + 50);
-                    break;
-                case 'training_book':
-                    gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 25);
-                    break;
-                case 'bow_tie':
-                    gameState.petInfo.accessories.push('bow_tie');
-                    break;
-                case 'luxury_home':
-                    gameState.petInfo.environment = 'luxury';
-                    changeEnvironment('luxury');
+                case 'info':
+                    notification.style.background = 'linear-gradient(45deg, #3B82F6, #2563EB)';
                     break;
             }
             
-            addExperience(5);
-            updateDisplay();
-            saveGameState();
-            showNotification('Item purchased successfully!', 'success');
-        }
-        
-        // Customization
-        function openCustomization() {
-            document.getElementById('customizationModal').classList.remove('hidden');
-            document.getElementById('customPetName').value = gameState.petInfo.name;
-        }
-        
-        function saveCustomization() {
-            const newName = document.getElementById('customPetName').value.trim();
-            if (newName) {
-                gameState.petInfo.name = newName;
-                updateDisplay();
-                saveGameState();
-                showNotification('Pet customized successfully!', 'success');
-                closeModal('customizationModal');
-            }
-        }
-        
-        function changePetColor(color) {
-            gameState.petInfo.color = color;
-            updateDisplay();
-        }
-        
-        function changeEnvironment(env) {
-            gameState.petInfo.environment = env;
-            const envBg = document.getElementById('environmentBg');
-            
-            const environments = {
-                park: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                beach: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                garden: 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)',
-                space: 'linear-gradient(135deg, #2c3e50 0%, #3498db 100%)',
-                luxury: 'linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%)'
-            };
-            
-            if (envBg) {
-                envBg.style.background = environments[env] || environments.park;
-            }
-        }
-        
-        function toggleAccessory(accessory) {
-            const index = gameState.petInfo.accessories.indexOf(accessory);
-            if (index > -1) {
-                gameState.petInfo.accessories.splice(index, 1);
-            } else {
-                gameState.petInfo.accessories.push(accessory);
-            }
-        }
-        
-        // Achievements
-        function openAchievements() {
-            document.getElementById('achievementsModal').classList.remove('hidden');
-            displayAchievements();
-        }
-        
-        function displayAchievements() {
-            const achievementsList = document.getElementById('achievementsList');
-            achievementsList.innerHTML = '';
-            
-            Object.keys(achievements).forEach(key => {
-                const achievement = achievements[key];
-                const isUnlocked = gameState.gameData.achievements.includes(key);
-                
-                const achievementDiv = document.createElement('div');
-                achievementDiv.className = `achievement ${isUnlocked ? '' : 'opacity-50'}`;
-                achievementDiv.innerHTML = `
-                    <div class="flex items-center">
-                        <div class="text-2xl mr-3">${achievement.icon}</div>
-                        <div>
-                            <h4 class="font-bold">${achievement.name}</h4>
-                            <p class="text-sm">${achievement.description}</p>
-                            ${isUnlocked ? '<span class="text-green-600 text-sm">✅ Unlocked</span>' : '<span class="text-gray-500 text-sm">🔒 Locked</span>'}
-                        </div>
-                    </div>
-                `;
-                achievementsList.appendChild(achievementDiv);
-            });
-        }
-        
-        function unlockAchievement(achievementId) {
-            if (!gameState.gameData.achievements.includes(achievementId)) {
-                gameState.gameData.achievements.push(achievementId);
-                const achievement = achievements[achievementId];
-                showNotification(`Achievement Unlocked: ${achievement.name}!`, 'success');
-                earnCoins(50);
-                saveGameState();
-            }
-        }
-        
-        function checkAchievements() {
-            // Check various achievement conditions
-            if (gameState.petStats.happiness >= 90 && !gameState.gameData.achievements.includes('happy_pet')) {
-                unlockAchievement('happy_pet');
-            }
-            
-            if (gameState.petStats.health === 100 && !gameState.gameData.achievements.includes('healthy_pet')) {
-                unlockAchievement('healthy_pet');
-            }
-            
-            if (gameState.petStats.intelligence === 100 && !gameState.gameData.achievements.includes('smart_pet')) {
-                unlockAchievement('smart_pet');
-            }
-            
-            if (gameState.gameData.coins >= 1000 && !gameState.gameData.achievements.includes('wealthy_owner')) {
-                unlockAchievement('wealthy_owner');
-            }
-            
-            if (gameState.petInfo.evolutionStage === 'adult' && !gameState.gameData.achievements.includes('pet_evolution')) {
-                unlockAchievement('pet_evolution');
-            }
-        }
-        
-        // Evolution System
-        function checkEvolution() {
-            const currentStage = gameState.petInfo.evolutionStage;
-            let newStage = currentStage;
-            
-            if (gameState.petInfo.age >= 30 && currentStage === 'baby') {
-                newStage = 'child';
-                gameState.petInfo.evolutionProgress = 0;
-            } else if (gameState.petInfo.age >= 60 && currentStage === 'child') {
-                newStage = 'teen';
-                gameState.petInfo.evolutionProgress = 0;
-            } else if (gameState.petInfo.age >= 100 && currentStage === 'teen') {
-                newStage = 'adult';
-                gameState.petInfo.evolutionProgress = 100;
-            }
-            
-            if (newStage !== currentStage) {
-                gameState.petInfo.evolutionStage = newStage;
-                showNotification(`Your pet evolved to ${newStage} stage!`, 'success');
-                earnCoins(100);
-                addExperience(50);
-            } else {
-                // Update evolution progress
-                const progressPerDay = 100 / 30; // 30 days per stage
-                gameState.petInfo.evolutionProgress = Math.min(100, (gameState.petInfo.age % 30) * progressPerDay);
-            }
-        }
-        
-        // Mini Games
-        function startMemoryGame() {
-            document.getElementById('memoryGameModal').classList.remove('hidden');
-            initializeMemoryGame();
-        }
-        
-        function initializeMemoryGame() {
-            const gameGrid = document.getElementById('memoryGameGrid');
-            const emojis = ['🐱', '🐕', '🐦', '🐠', '🐹', '🐰', '🦊', '🐸'];
-            const gameCards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
-            
-            gameGrid.innerHTML = '';
-            gameState.memoryGame = {
-                score: 0,
-                moves: 0,
-                flippedCards: [],
-                matchedPairs: 0
-            };
-            
-            gameCards.forEach((emoji, index) => {
-                const card = document.createElement('div');
-                card.className = 'game-card';
-                card.dataset.emoji = emoji;
-                card.dataset.index = index;
-                card.textContent = '?';
-                card.onclick = () => flipMemoryCard(card);
-                gameGrid.appendChild(card);
-            });
-            
-            updateMemoryGameUI();
-        }
-        
-        function flipMemoryCard(card) {
-            if (card.classList.contains('matched') || gameState.memoryGame.flippedCards.length >= 2) {
-                return;
-            }
-            
-            card.textContent = card.dataset.emoji;
-            card.style.background = '#4ecdc4';
-            gameState.memoryGame.flippedCards.push(card);
-            
-            if (gameState.memoryGame.flippedCards.length === 2) {
-                gameState.memoryGame.moves++;
-                updateMemoryGameUI();
-                
-                setTimeout(() => {
-                    checkMemoryMatch();
-                }, 1000);
-            }
-        }
-        
-        function checkMemoryMatch() {
-            const [card1, card2] = gameState.memoryGame.flippedCards;
-            
-            if (card1.dataset.emoji === card2.dataset.emoji) {
-                card1.classList.add('matched');
-                card2.classList.add('matched');
-                gameState.memoryGame.score += 10;
-                gameState.memoryGame.matchedPairs++;
-                
-                if (gameState.memoryGame.matchedPairs === 8) {
-                    showNotification('Congratulations! You won the memory game!', 'success');
-                    earnCoins(50);
-                    addExperience(25);
-                    gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 10);
-                    updateDisplay();
-                }
-            } else {
-                card1.textContent = '?';
-                card2.textContent = '?';
-                card1.style.background = '#f8f9fa';
-                card2.style.background = '#f8f9fa';
-            }
-            
-            gameState.memoryGame.flippedCards = [];
-            updateMemoryGameUI();
-        }
-        
-        function updateMemoryGameUI() {
-            document.getElementById('memoryScore').textContent = gameState.memoryGame.score;
-            document.getElementById('memoryMoves').textContent = gameState.memoryGame.moves;
-        }
-        
-        function resetMemoryGame() {
-            initializeMemoryGame();
-        }
-        
-        // Catch Game
-        function startCatchGame() {
-            document.getElementById('catchGameModal').classList.remove('hidden');
-            initializeCatchGame();
-        }
-        
-        function initializeCatchGame() {
-            gameState.catchGame = {
-                score: 0,
-                lives: 3,
-                isPlaying: false,
-                catcherPosition: 50,
-                fallingItems: []
-            };
-            updateCatchGameUI();
-        }
-        
-        function startCatchGameplay() {
-            if (gameState.catchGame.isPlaying) return;
-            
-            gameState.catchGame.isPlaying = true;
-            document.getElementById('startCatchBtn').textContent = 'Playing...';
-            document.getElementById('startCatchBtn').disabled = true;
-            
-            // Start spawning falling items
-            gameState.catchGame.spawnInterval = setInterval(spawnFallingItem, 1500);
-            
-            // Game duration: 30 seconds
             setTimeout(() => {
-                endCatchGame();
-            }, 30000);
-            
-            // Set up catcher movement
-            setupCatcherControls();
-        }
-        
-        function setupCatcherControls() {
-            const gameArea = document.getElementById('catchGameArea');
-            const catcher = document.getElementById('catcher');
-            
-            gameArea.addEventListener('mousemove', (e) => {
-                if (!gameState.catchGame.isPlaying) return;
-                
-                const rect = gameArea.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
-                
-                gameState.catchGame.catcherPosition = percentage;
-                catcher.style.left = percentage + '%';
-            });
-        }
-        
-        function spawnFallingItem() {
-            const gameArea = document.getElementById('catchGameArea');
-            const item = document.createElement('div');
-            const treats = ['🦴', '🐟', '🥕', '🧀'];
-            
-            item.textContent = treats[Math.floor(Math.random() * treats.length)];
-            item.style.position = 'absolute';
-            item.style.fontSize = '24px';
-            item.style.left = Math.random() * 90 + '%';
-            item.style.top = '0px';
-            item.style.transition = 'top 3s linear';
-            
-            gameArea.appendChild(item);
-            
-            // Animate falling
-            setTimeout(() => {
-                item.style.top = '370px';
-            }, 10);
-            
-            // Check for catch or miss
-            setTimeout(() => {
-                checkCatch(item);
+                notification.classList.remove('show');
             }, 3000);
         }
-        
-        function checkCatch(item) {
-            const itemRect = item.getBoundingClientRect();
-            const catcherRect = document.getElementById('catcher').getBoundingClientRect();
-            
-            const caught = itemRect.left < catcherRect.right && 
-                          itemRect.right > catcherRect.left && 
-                          itemRect.bottom > catcherRect.top;
-            
-            if (caught) {
-                gameState.catchGame.score += 10;
-                showNotification('Caught!', 'success');
-            } else {
-                gameState.catchGame.lives--;
-                if (gameState.catchGame.lives <= 0) {
-                    endCatchGame();
-                }
-            }
-            
-            if (item.parentNode) {
-                item.parentNode.removeChild(item);
-            }
-            
-            updateCatchGameUI();
-        }
-        
-        function endCatchGame() {
-            gameState.catchGame.isPlaying = false;
-            clearInterval(gameState.catchGame.spawnInterval);
-            
-            document.getElementById('startCatchBtn').textContent = 'Start Game';
-            document.getElementById('startCatchBtn').disabled = false;
-            
-            // Clear remaining items
-            const gameArea = document.getElementById('catchGameArea');
-            const items = gameArea.querySelectorAll('div:not(#catcher)');
-            items.forEach(item => item.remove());
-            
-            // Reward player
-            const reward = gameState.catchGame.score;
-            earnCoins(reward);
-            addExperience(reward);
-            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 15);
-            
-            showNotification(`Game over! You earned ${reward} coins!`, 'success');
-            updateDisplay();
-        }
-        
-        function updateCatchGameUI() {
-            document.getElementById('catchScore').textContent = gameState.catchGame.score;
-            document.getElementById('catchLives').textContent = gameState.catchGame.lives;
-        }
-        
-        function resetCatchGame() {
-            if (gameState.catchGame.isPlaying) {
-                endCatchGame();
-            }
-            initializeCatchGame();
-        }
-        
-        // Puzzle Game (simplified version)
-        function startPuzzleGame() {
-            const puzzles = [
-                "What animal says 'meow'?",
-                "What do dogs like to play with?",
-                "What do fish live in?",
-                "What do cats like to chase?"
-            ];
-            
-            const answers = ['cat', 'ball', 'water', 'mouse'];
-            const randomIndex = Math.floor(Math.random() * puzzles.length);
-            
-            const userAnswer = prompt(puzzles[randomIndex]);
-            
-            if (userAnswer && userAnswer.toLowerCase().includes(answers[randomIndex])) {
-                showNotification('Correct! Your pet learned something new!', 'success');
-                gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 15);
-                gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 10);
-                earnCoins(30);
-                addExperience(20);
-            } else {
-                showNotification('Not quite right, but your pet had fun trying!', 'info');
-                gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 5);
-                earnCoins(10);
-                addExperience(5);
-            }
-            
-            updateDisplay();
-        }
-        
-        // Vet and Training
-        function visitVet() {
-            if (gameState.gameData.coins < 30) {
-                showNotification('Vet visit costs 30 coins!', 'warning');
-                return;
-            }
-            
-            spendCoins(30);
-            gameState.petStats.health = 100;
-            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 15);
-            addExperience(20);
-            
-            showNotification('Your pet got a thorough health checkup!', 'success');
-            updateDisplay();
-        }
-        
-        function trainPet() {
-            if (gameState.petStats.energy < 30) {
-                showNotification('Your pet is too tired to train!', 'warning');
-                return;
-            }
-            
-            if (gameState.gameData.coins < 20) {
-                showNotification('Training costs 20 coins!', 'warning');
-                return;
-            }
-            
-            spendCoins(20);
-            gameState.petStats.energy = Math.max(0, gameState.petStats.energy - 25);
-            gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 20);
-            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 10);
-            addExperience(25);
-            
-            showNotification('Training session completed! Your pet is smarter!', 'success');
-            updateDisplay();
-        }
-        
-        // Game Loop and Time Management
+
+        // Game loop for time-based mechanics
         function startGameLoop() {
             setInterval(() => {
-                if (gameState.selectedPet) {
-                    updatePetNeeds();
-                    ageUp();
-                    updateWeather();
-                    saveGameState();
-                }
-            }, 10000); // Update every 10 seconds
+                updatePetNeeds();
+                updateTimeAndWeather();
+            }, 60000); // Update every minute
         }
-        
+
         function updatePetNeeds() {
-            // Gradual decrease of stats over time (realistic pet care)
-            const petType = petTypes[gameState.selectedPet];
-            if (petType) {
-                gameState.petStats.hunger = Math.max(0, gameState.petStats.hunger + (petType.baseStats.hunger || -1));
-                gameState.petStats.happiness = Math.max(0, gameState.petStats.happiness + (petType.baseStats.happiness || -0.5));
-                gameState.petStats.energy = Math.max(0, gameState.petStats.energy + (petType.baseStats.energy || -0.5));
-                gameState.petStats.cleanliness = Math.max(0, gameState.petStats.cleanliness - 0.3);
-                
-                // Health is affected by other stats
-                const avgCare = (gameState.petStats.hunger + gameState.petStats.happiness + gameState.petStats.cleanliness) / 3;
-                if (avgCare < 30) {
-                    gameState.petStats.health = Math.max(0, gameState.petStats.health - 1);
-                } else if (avgCare > 80) {
-                    gameState.petStats.health = Math.min(100, gameState.petStats.health + 0.5);
-                }
+            const now = Date.now();
+            const hoursPassed = {
+                feed: (now - gameState.currentPet.lastFed) / (1000 * 60 * 60),
+                play: (now - gameState.currentPet.lastPlayed) / (1000 * 60 * 60),
+                clean: (now - gameState.currentPet.lastCleaned) / (1000 * 60 * 60),
+                sleep: (now - gameState.currentPet.lastSlept) / (1000 * 60 * 60)
+            };
+            
+            // Decrease stats over time
+            if (hoursPassed.feed > 1) {
+                gameState.currentPet.hunger = Math.max(0, gameState.currentPet.hunger - 5);
+            }
+            if (hoursPassed.clean > 2) {
+                gameState.currentPet.cleanliness = Math.max(0, gameState.currentPet.cleanliness - 3);
+            }
+            if (hoursPassed.sleep > 6) {
+                gameState.currentPet.energy = Math.max(0, gameState.currentPet.energy - 10);
+            }
+            if (hoursPassed.play > 3) {
+                gameState.currentPet.happiness = Math.max(0, gameState.currentPet.happiness - 8);
             }
             
-            updateDisplay();
+            updatePetMood();
+            updateUI();
         }
-        
-        function ageUp() {
-            gameState.petInfo.age += 0.1; // Age in game hours
-            gameState.petInfo.weight += 0.001; // Weight gain
-            gameState.gameData.totalPlayTime += 10; // seconds
-        }
-        
-        // Weather and Day/Night System
-        function initializeWeather() {
-            gameState.gameSettings.weather = weatherPatterns[Math.floor(Math.random() * weatherPatterns.length)];
-            updateWeatherDisplay();
-        }
-        
-        function updateWeather() {
-            if (Math.random() < 0.1) { // 10% chance to change weather
-                gameState.gameSettings.weather = weatherPatterns[Math.floor(Math.random() * weatherPatterns.length)];
+
+        function updateTimeAndWeather() {
+            const hour = new Date().getHours();
+            const dayNightCycle = document.getElementById('dayNightCycle');
+            
+            if (hour >= 6 && hour < 18) {
+                gameState.timeOfDay = 'day';
+                dayNightCycle.className = 'day-night-cycle day';
+            } else {
+                gameState.timeOfDay = 'night';
+                dayNightCycle.className = 'day-night-cycle night';
+            }
+            
+            // Random weather changes
+            if (Math.random() < 0.1) {
+                const weathers = ['sunny', 'cloudy', 'rainy', 'snowy'];
+                gameState.weather = weathers[Math.floor(Math.random() * weathers.length)];
                 updateWeatherDisplay();
             }
         }
-        
+
         function updateWeatherDisplay() {
-            const weatherWidget = document.getElementById('weatherWidget');
-            const icon = weatherIcons[gameState.gameSettings.weather];
-            const name = gameState.gameSettings.weather.charAt(0).toUpperCase() + gameState.gameSettings.weather.slice(1);
+            const weatherText = document.getElementById('weatherText');
+            const weatherIcon = document.querySelector('#currentWeather i');
+            const weatherEffect = document.getElementById('weatherEffect');
             
-            if (weatherWidget) {
-                weatherWidget.innerHTML = `<span class="text-2xl">${icon}</span><span class="ml-2">${name}</span>`;
+            switch(gameState.weather) {
+                case 'sunny':
+                    weatherText.textContent = 'Sunny';
+                    weatherIcon.className = 'fas fa-sun';
+                    weatherEffect.className = 'weather-effect';
+                    break;
+                case 'cloudy':
+                    weatherText.textContent = 'Cloudy';
+                    weatherIcon.className = 'fas fa-cloud';
+                    weatherEffect.className = 'weather-effect';
+                    break;
+                case 'rainy':
+                    weatherText.textContent = 'Rainy';
+                    weatherIcon.className = 'fas fa-cloud-rain';
+                    weatherEffect.className = 'weather-effect rain';
+                    break;
+                case 'snowy':
+                    weatherText.textContent = 'Snowy';
+                    weatherIcon.className = 'fas fa-snowflake';
+                    weatherEffect.className = 'weather-effect';
+                    break;
             }
         }
-        
-        function initializeDayNightCycle() {
-            setInterval(() => {
-                gameState.gameSettings.isDay = !gameState.gameSettings.isDay;
-                const cycle = document.getElementById('dayNightCycle');
-                cycle.className = `day-night-cycle ${gameState.gameSettings.isDay ? 'day' : 'night'}`;
-            }, 60000); // Change every minute for demo purposes
-        }
-        
-        // Utility Functions
-        function addExperience(amount) {
-            gameState.gameData.experience += amount;
-            if (gameState.gameData.experience >= 100) {
-                gameState.gameData.level++;
-                gameState.gameData.experience = 0;
-                earnCoins(gameState.gameData.level * 10);
-                showNotification(`Level up! You are now level ${gameState.gameData.level}!`, 'success');
+
+        // Pet collection functions
+        function loadPetCollection() {
+            const collection = document.getElementById('petCollection');
+            collection.innerHTML = '';
+            
+            // Add current pet
+            const petCard = createPetCard(gameState.currentPet, true);
+            collection.appendChild(petCard);
+            
+            // Add placeholder for more pets
+            for (let i = 0; i < 5; i++) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'pet-card p-6 text-center border-2 border-dashed border-gray-300';
+                placeholder.innerHTML = `
+                    <div class="text-6xl mb-4">➕</div>
+                    <p class="text-gray-600">Adopt a new pet</p>
+                    <button onclick="adoptNewPet()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                        Adopt Pet
+                    </button>
+                `;
+                collection.appendChild(placeholder);
             }
         }
-        
-        function earnCoins(amount) {
-            gameState.gameData.coins += amount;
+
+        function createPetCard(pet, isActive = false) {
+            const card = document.createElement('div');
+            card.className = `pet-card p-6 ${isActive ? 'ring-2 ring-blue-500' : ''}`;
+            card.innerHTML = `
+                <div class="text-center">
+                    <div class="text-6xl mb-4">${pet.emoji}</div>
+                    <h3 class="text-xl font-bold mb-2">${pet.name}</h3>
+                    <p class="text-gray-600 mb-2">Level ${pet.level}</p>
+                    <p class="text-gray-600 mb-4">Age: ${pet.age} months</p>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span>Health:</span>
+                            <span>${pet.health}/100</span>
+                        </div>
+                        <div class="status-bar">
+                            <div class="status-fill bg-green-500" style="width: ${pet.health}%"></div>
+                        </div>
+                        
+                        <div class="flex justify-between text-sm">
+                            <span>Happiness:</span>
+                            <span>${pet.happiness}/100</span>
+                        </div>
+                        <div class="status-bar">
+                            <div class="status-fill bg-pink-500" style="width: ${pet.happiness}%"></div>
+                        </div>
+                    </div>
+                    
+                    ${!isActive ? `<button onclick="switchToPet('${pet.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-300">Select Pet</button>` : '<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Active Pet</span>'}
+                </div>
+            `;
+            return card;
         }
-        
-        function spendCoins(amount) {
-            gameState.gameData.coins = Math.max(0, gameState.gameData.coins - amount);
+
+        function adoptNewPet() {
+            showModal(`
+                <h2 class="text-2xl font-bold mb-4">Adopt a New Pet</h2>
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="pet-option p-4 border rounded-lg cursor-pointer hover:bg-blue-50" onclick="selectPetType('cat')">
+                        <div class="text-4xl text-center mb-2">🐱</div>
+                        <h3 class="font-bold text-center">Cat</h3>
+                        <p class="text-sm text-gray-600 text-center">Independent and playful</p>
+                    </div>
+                    <div class="pet-option p-4 border rounded-lg cursor-pointer hover:bg-blue-50" onclick="selectPetType('dog')">
+                        <div class="text-4xl text-center mb-2">🐶</div>
+                        <h3 class="font-bold text-center">Dog</h3>
+                        <p class="text-sm text-gray-600 text-center">Loyal and energetic</p>
+                    </div>
+                    <div class="pet-option p-4 border rounded-lg cursor-pointer hover:bg-blue-50" onclick="selectPetType('bird')">
+                        <div class="text-4xl text-center mb-2">🐦</div>
+                        <h3 class="font-bold text-center">Bird</h3>
+                        <p class="text-sm text-gray-600 text-center">Colorful and intelligent</p>
+                    </div>
+                    <div class="pet-option p-4 border rounded-lg cursor-pointer hover:bg-blue-50" onclick="selectPetType('fish')">
+                        <div class="text-4xl text-center mb-2">🐠</div>
+                        <h3 class="font-bold text-center">Fish</h3>
+                        <p class="text-sm text-gray-600 text-center">Peaceful and calming</p>
+                    </div>
+                    <div class="pet-option p-4 border rounded-lg cursor-pointer hover:bg-blue-50" onclick="selectPetType('hamster')">
+                        <div class="text-4xl text-center mb-2">🐹</div>
+                        <h3 class="font-bold text-center">Hamster</h3>
+                        <p class="text-sm text-gray-600 text-center">Small and adorable</p>
+                    </div>
+                    <div class="pet-option p-4 border rounded-lg cursor-pointer hover:bg-blue-50" onclick="selectPetType('rabbit')">
+                        <div class="text-4xl text-center mb-2">🐰</div>
+                        <h3 class="font-bold text-center">Rabbit</h3>
+                        <p class="text-sm text-gray-600 text-center">Gentle and cute</p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="w-full bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-300">
+                    Cancel
+                </button>
+            `);
         }
-        
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `notification bg-${type === 'success' ? 'green' : type === 'warning' ? 'yellow' : type === 'error' ? 'red' : 'blue'}-500`;
-            notification.textContent = message;
+
+        function selectPetType(type) {
+            const petEmojis = {
+                cat: '🐱',
+                dog: '🐶',
+                bird: '🐦',
+                fish: '🐠',
+                hamster: '🐹',
+                rabbit: '🐰'
+            };
             
-            document.body.appendChild(notification);
+            const names = {
+                cat: ['Whiskers', 'Shadow', 'Luna', 'Tiger', 'Mittens'],
+                dog: ['Buddy', 'Max', 'Bella', 'Charlie', 'Lucy'],
+                bird: ['Tweety', 'Sky', 'Azure', 'Sunny', 'Feather'],
+                fish: ['Bubble', 'Splash', 'Coral', 'Neptune', 'Pearl'],
+                hamster: ['Peanut', 'Nibbles', 'Cheeks', 'Tiny', 'Squeaky'],
+                rabbit: ['Bunny', 'Hop', 'Cotton', 'Clover', 'Snowball']
+            };
             
-            setTimeout(() => {
-                if (document.body.contains(notification)) {
-                    document.body.removeChild(notification);
+            if (gameState.coins >= 200) {
+                gameState.coins -= 200;
+                const randomName = names[type][Math.floor(Math.random() * names[type].length)];
+                showNotification(`Congratulations! You adopted ${randomName} the ${type}!`, 'success');
+                closeModal();
+                updateUI();
+            } else {
+                showNotification('You need 200 coins to adopt a pet', 'error');
+            }
+        }
+
+        // House designer functions
+        function loadHouseDesigner() {
+            generateRoomLayout();
+            generateFurnitureInventory();
+        }
+
+        function switchRoom(roomName) {
+            gameState.currentRoom = roomName;
+            document.getElementById('currentRoomTitle').textContent = 
+                roomName.charAt(0).toUpperCase() + roomName.slice(1);
+            
+            // Update active tab
+            const tabs = document.querySelectorAll('[data-room]');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`[data-room="${roomName}"]`).classList.add('active');
+            
+            generateRoomLayout();
+        }
+
+        function generateRoomLayout() {
+            const layout = document.getElementById('roomLayout');
+            layout.innerHTML = '';
+            
+            for (let i = 0; i < 25; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'room-tile';
+                tile.onclick = () => placeFurniture(i);
+                layout.appendChild(tile);
+            }
+        }
+
+        function generateFurnitureInventory() {
+            const inventory = document.getElementById('furnitureInventory');
+            inventory.innerHTML = '';
+            
+            const furniture = {
+                bed: '🛏️',
+                chair: '🪑',
+                table: '🪑',
+                plant: '🪴',
+                lamp: '💡',
+                toy: '🧸',
+                food_bowl: '🥣',
+                bookshelf: '📚'
+            };
+            
+            Object.entries(furniture).forEach(([name, emoji]) => {
+                const item = document.createElement('div');
+                item.className = 'furniture-item';
+                item.textContent = emoji;
+                item.onclick = () => selectFurniture(name);
+                inventory.appendChild(item);
+            });
+        }
+
+        let selectedFurniture = null;
+
+        function selectFurniture(type) {
+            selectedFurniture = type;
+            const items = document.querySelectorAll('.furniture-item');
+            items.forEach(item => item.classList.remove('ring-2', 'ring-blue-500'));
+            event.target.classList.add('ring-2', 'ring-blue-500');
+        }
+
+        function placeFurniture(position) {
+            if (selectedFurniture) {
+                const tile = document.querySelectorAll('.room-tile')[position];
+                const furniture = {
+                    bed: '🛏️',
+                    chair: '🪑',
+                    table: '🪑',
+                    plant: '🪴',
+                    lamp: '💡',
+                    toy: '🧸',
+                    food_bowl: '🥣',
+                    bookshelf: '📚'
+                };
+                
+                tile.innerHTML = `<div class="text-2xl">${furniture[selectedFurniture]}</div>`;
+                tile.style.borderColor = '#667eea';
+                showNotification(`Placed ${selectedFurniture} in the room!`, 'success');
+            }
+        }
+
+        function saveRoomLayout() {
+            showNotification('Room layout saved!', 'success');
+        }
+
+        function clearRoom() {
+            generateRoomLayout();
+            showNotification('Room cleared!', 'info');
+        }
+
+        // Exploration functions
+        function exploreLocation(location) {
+            const locations = {
+                park: {
+                    icon: '🏞️',
+                    title: 'City Park',
+                    rewards: ['coins', 'happiness', 'energy']
+                },
+                beach: {
+                    icon: '🏖️',
+                    title: 'Sunny Beach',
+                    rewards: ['treasure', 'happiness', 'experience']
+                },
+                forest: {
+                    icon: '🌲',
+                    title: 'Mystery Forest',
+                    rewards: ['rare_items', 'health', 'adventure']
+                },
+                city: {
+                    icon: '🏙️',
+                    title: 'Downtown',
+                    rewards: ['coins', 'social', 'shopping']
                 }
+            };
+            
+            const loc = locations[location];
+            const explorationArea = document.getElementById('explorationArea');
+            
+            document.getElementById('explorationIcon').textContent = loc.icon;
+            document.getElementById('explorationTitle').textContent = `Exploring ${loc.title}`;
+            
+            explorationArea.style.display = 'block';
+            
+            // Simulate exploration
+            setTimeout(() => {
+                const rewards = loc.rewards[Math.floor(Math.random() * loc.rewards.length)];
+                let rewardText = '';
+                
+                switch(rewards) {
+                    case 'coins':
+                        const coinReward = Math.floor(Math.random() * 50) + 20;
+                        gameState.coins += coinReward;
+                        rewardText = `Found ${coinReward} coins!`;
+                        break;
+                    case 'happiness':
+                        gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 15);
+                        rewardText = 'Your pet had a wonderful time!';
+                        break;
+                    case 'experience':
+                        gainExperience(20);
+                        rewardText = 'Gained valuable experience!';
+                        break;
+                    case 'treasure':
+                        gameState.inventory.toys.push('treasure_chest');
+                        rewardText = 'Found a treasure chest!';
+                        break;
+                    default:
+                        rewardText = 'Had an amazing adventure!';
+                }
+                
+                document.getElementById('explorationContent').innerHTML = `
+                    <div class="text-green-600 font-bold text-lg mb-2">${rewardText}</div>
+                    <p>Your pet enjoyed exploring the ${loc.title}!</p>
+                `;
+                
+                showNotification(rewardText, 'success');
+                updateUI();
             }, 3000);
         }
-        
-        function capitalizeFirst(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1);
+
+        function finishExploration() {
+            document.getElementById('explorationArea').style.display = 'none';
         }
-        
-        // Modal Management
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
+
+        // Mini-games
+        function playGame(gameType) {
+            const gameArea = document.getElementById('gameArea');
+            gameArea.style.display = 'block';
+            
+            switch(gameType) {
+                case 'memory':
+                    loadMemoryGame();
+                    break;
+                case 'catch':
+                    loadCatchGame();
+                    break;
+                case 'puzzle':
+                    loadPuzzleGame();
+                    break;
+                case 'racing':
+                    loadRacingGame();
+                    break;
+                case 'training':
+                    loadTrainingGame();
+                    break;
+                case 'talent':
+                    loadTalentShow();
+                    break;
+            }
         }
-        
-        // Save/Load Game State
-        function saveGameState() {
-            localStorage.setItem('virtualPetGame', JSON.stringify(gameState));
+
+        function loadMemoryGame() {
+            document.getElementById('gameContent').innerHTML = `
+                <h3 class="text-xl font-bold mb-4">Memory Match Game</h3>
+                <div class="grid grid-cols-4 gap-2 mb-4" id="memoryGrid">
+                    <!-- Memory cards will be generated -->
+                </div>
+                <div class="text-center">
+                    <button onclick="startMemoryGame()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Start Game
+                    </button>
+                    <button onclick="closeGame()" class="ml-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Close
+                    </button>
+                </div>
+                <div id="gameScore" class="text-center mt-4 font-bold"></div>
+            `;
         }
-        
-        function loadGameState() {
-            const saved = localStorage.getItem('virtualPetGame');
-            if (saved) {
-                try {
-                    const loadedState = JSON.parse(saved);
-                    gameState = { ...gameState, ...loadedState };
+
+        function startMemoryGame() {
+            const symbols = ['🐱', '🐶', '🐦', '🐠', '🐹', '🐰', '🦔', '🐸'];
+            const cards = [...symbols, ...symbols].sort(() => Math.random() - 0.5);
+            const grid = document.getElementById('memoryGrid');
+            
+            grid.innerHTML = '';
+            let flippedCards = [];
+            let matches = 0;
+            
+            cards.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'w-16 h-16 bg-blue-500 rounded-lg flex items-center justify-center cursor-pointer text-2xl';
+                card.style.backgroundColor = '#3B82F6';
+                card.onclick = () => flipCard(card, symbol, index);
+                grid.appendChild(card);
+            });
+            
+            function flipCard(card, symbol, index) {
+                if (flippedCards.length < 2 && !card.classList.contains('flipped')) {
+                    card.textContent = symbol;
+                    card.style.backgroundColor = '#FFF';
+                    card.classList.add('flipped');
+                    flippedCards.push({card, symbol, index});
                     
-                    if (gameState.selectedPet) {
-                        document.getElementById('petSelectionScreen').classList.add('hidden');
-                        document.getElementById('gameScreen').classList.remove('hidden');
-                        updateDisplay();
+                    if (flippedCards.length === 2) {
                         setTimeout(() => {
-                            initializeStatsChart();
-                        }, 100);
+                            if (flippedCards[0].symbol === flippedCards[1].symbol) {
+                                matches++;
+                                document.getElementById('gameScore').textContent = `Matches: ${matches}/8`;
+                                if (matches === 8) {
+                                    gameState.coins += 20;
+                                    gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 15);
+                                    showNotification('Memory game completed! +20 coins', 'success');
+                                    updateUI();
+                                }
+                            } else {
+                                flippedCards.forEach(({card}) => {
+                                    card.textContent = '';
+                                    card.style.backgroundColor = '#3B82F6';
+                                    card.classList.remove('flipped');
+                                });
+                            }
+                            flippedCards = [];
+                        }, 1000);
                     }
-                } catch (e) {
-                    console.log('Could not load saved game');
                 }
             }
         }
-        
-        // Click outside modal to close
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal')) {
-                e.target.classList.add('hidden');
-            }
-        });
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.classList.add('hidden');
+
+        function loadCatchGame() {
+            document.getElementById('gameContent').innerHTML = `
+                <h3 class="text-xl font-bold mb-4">Catch the Treat!</h3>
+                <div class="relative bg-green-200 h-64 rounded-lg mb-4 overflow-hidden" id="catchGameArea">
+                    <div id="catchBasket" class="absolute bottom-2 w-16 h-8 bg-brown-500 rounded-lg" style="left: 50%; transform: translateX(-50%); background: #8B5A00;">🧺</div>
+                </div>
+                <div class="text-center">
+                    <button onclick="startCatchGame()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Start Game
+                    </button>
+                    <button onclick="closeGame()" class="ml-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Close
+                    </button>
+                </div>
+                <div id="catchScore" class="text-center mt-4 font-bold">Score: 0</div>
+            `;
+        }
+
+        function startCatchGame() {
+            let score = 0;
+            let gameTime = 30;
+            const gameArea = document.getElementById('catchGameArea');
+            const basket = document.getElementById('catchBasket');
+            const scoreDisplay = document.getElementById('catchScore');
+            
+            // Move basket with mouse
+            gameArea.addEventListener('mousemove', (e) => {
+                const rect = gameArea.getBoundingClientRect();
+                const x = e.clientX - rect.left - 32; // Center the basket
+                basket.style.left = Math.max(0, Math.min(x, gameArea.offsetWidth - 64)) + 'px';
+            });
+            
+            const gameInterval = setInterval(() => {
+                if (gameTime <= 0) {
+                    clearInterval(gameInterval);
+                    gameState.coins += score * 2;
+                    gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 10);
+                    showNotification(`Game over! Score: ${score}. +${score * 2} coins`, 'success');
+                    updateUI();
+                    return;
+                }
+                
+                // Spawn falling treat
+                const treat = document.createElement('div');
+                treat.textContent = '🍖';
+                treat.className = 'absolute text-2xl';
+                treat.style.left = Math.random() * (gameArea.offsetWidth - 32) + 'px';
+                treat.style.top = '0px';
+                gameArea.appendChild(treat);
+                
+                // Animate treat falling
+                let treatY = 0;
+                const treatFall = setInterval(() => {
+                    treatY += 5;
+                    treat.style.top = treatY + 'px';
+                    
+                    // Check collision with basket
+                    const treatRect = treat.getBoundingClientRect();
+                    const basketRect = basket.getBoundingClientRect();
+                    
+                    if (treatRect.bottom >= basketRect.top &&
+                        treatRect.left < basketRect.right &&
+                        treatRect.right > basketRect.left) {
+                        score++;
+                        scoreDisplay.textContent = `Score: ${score}`;
+                        treat.remove();
+                        clearInterval(treatFall);
+                    } else if (treatY > gameArea.offsetHeight) {
+                        treat.remove();
+                        clearInterval(treatFall);
+                    }
+                }, 50);
+                
+                gameTime--;
+            }, 1000);
+        }
+
+        function loadPuzzleGame() {
+            document.getElementById('gameContent').innerHTML = `
+                <h3 class="text-xl font-bold mb-4">Jigsaw Puzzle</h3>
+                <div class="grid grid-cols-3 gap-1 mb-4 w-64 h-64 mx-auto bg-gray-200 p-2 rounded-lg" id="puzzleGrid">
+                    <!-- Puzzle pieces will be generated -->
+                </div>
+                <div class="text-center">
+                    <button onclick="startPuzzleGame()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Start Puzzle
+                    </button>
+                    <button onclick="closeGame()" class="ml-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Close
+                    </button>
+                </div>
+                <div id="puzzleStatus" class="text-center mt-4 font-bold">Click Start to begin!</div>
+            `;
+        }
+
+        function startPuzzleGame() {
+            const pieces = [1, 2, 3, 4, 5, 6, 7, 8, 0]; // 0 represents empty space
+            const solved = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+            let currentState = [...pieces].sort(() => Math.random() - 0.5);
+            
+            renderPuzzle();
+            
+            function renderPuzzle() {
+                const grid = document.getElementById('puzzleGrid');
+                grid.innerHTML = '';
+                
+                currentState.forEach((piece, index) => {
+                    const tile = document.createElement('div');
+                    tile.className = 'w-full h-full border border-gray-400 flex items-center justify-center cursor-pointer font-bold text-lg';
+                    
+                    if (piece === 0) {
+                        tile.style.backgroundColor = '#F3F4F6';
+                    } else {
+                        tile.textContent = piece;
+                        tile.style.backgroundColor = '#E5E7EB';
+                        tile.onclick = () => movePiece(index);
+                    }
+                    
+                    grid.appendChild(tile);
                 });
             }
-        });
-        
-        // Welcome message
-        setTimeout(() => {
-            showNotification('Welcome to Virtual Pet Paradise! Choose your pet to start your journey!', 'success');
-        }, 1000);
-    </script>
-</body>
-</html>
+            
+            function movePiece(index) {
+                const emptyIndex = currentState.indexOf(0);
+                const validMoves = [
+                    emptyIndex - 1, emptyIndex + 1, // horizontal
+                    emptyIndex - 3, emptyIndex + 3  // vertical
+                ].filter(i => {
+                    if (i < 0 || i > 8) return false;
+                    if (emptyIndex % 3 === 0 && i === emptyIndex - 1) return false;
+                    if (emptyIndex % 3 === 2 && i === emptyIndex + 1) return false;
+                    return true;
+                });
+                
+                if (validMoves.includes(index)) {
+                    [currentState[index], currentState[emptyIndex]] = [currentState[emptyIndex], currentState[index]];
+                    renderPuzzle();
+                    
+                    if (JSON.stringify(currentState) === JSON.stringify(solved)) {
+                        document.getElementById('puzzleStatus').textContent = 'Puzzle Solved!';
+                        gameState.coins += 25;
+                        gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 20);
+                        showNotification('Puzzle completed! +25 coins', 'success');
+                        updateUI();
+                    }
+                }
+            }
+        }
+
+        function loadRacingGame() {
+            document.getElementById('gameContent').innerHTML = `
+                <h3 class="text-xl font-bold mb-4">Pet Racing Championship</h3>
+                <div class="bg-green-300 h-48 rounded-lg mb-4 relative overflow-hidden" id="raceTrack">
+                    <div class="absolute left-2 top-8 text-2xl" id="playerPet">${gameState.currentPet.emoji}</div>
+                    <div class="absolute left-2 top-16 text-2xl">🐶</div>
+                    <div class="absolute left-2 top-24 text-2xl">🐱</div>
+                    <div class="absolute left-2 top-32 text-2xl">🐰</div>
+                    <div class="absolute right-2 top-8 text-2xl">🏁</div>
+                    <div class="absolute right-2 top-16 text-2xl">🏁</div>
+                    <div class="absolute right-2 top-24 text-2xl">🏁</div>
+                    <div class="absolute right-2 top-32 text-2xl">🏁</div>
+                </div>
+                <div class="text-center">
+                    <button onclick="startRace()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Start Race!
+                    </button>
+                    <button onclick="closeGame()" class="ml-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Close
+                    </button>
+                </div>
+                <div id="raceStatus" class="text-center mt-4 font-bold">Click Start Race!</div>
+            `;
+        }
+
+        function startRace() {
+            const track = document.getElementById('raceTrack');
+            const playerPet = document.getElementById('playerPet');
+            const competitors = track.querySelectorAll('.absolute:not(#playerPet):not([class*="right-2"])');
+            const statusDiv = document.getElementById('raceStatus');
+            
+            let playerPosition = 0;
+            let competitorPositions = [0, 0, 0];
+            const finishLine = track.offsetWidth - 100;
+            
+            statusDiv.textContent = 'Race in progress...';
+            
+            const raceInterval = setInterval(() => {
+                // Player speed based on pet stats
+                const playerSpeed = Math.random() * 5 + (gameState.currentPet.energy / 20);
+                playerPosition += playerSpeed;
+                playerPet.style.left = Math.min(playerPosition, finishLine) + 'px';
+                
+                // Competitor speeds
+                competitors.forEach((competitor, index) => {
+                    const speed = Math.random() * 7 + 2;
+                    competitorPositions[index] += speed;
+                    competitor.style.left = Math.min(competitorPositions[index], finishLine) + 'px';
+                });
+                
+                // Check for winner
+                if (playerPosition >= finishLine) {
+                    clearInterval(raceInterval);
+                    statusDiv.textContent = '🏆 You Won!';
+                    gameState.coins += 50;
+                    gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 25);
+                    showNotification('Race won! +50 coins', 'success');
+                    updateUI();
+                } else if (competitorPositions.some(pos => pos >= finishLine)) {
+                    clearInterval(raceInterval);
+                    statusDiv.textContent = '😔 You lost, but got participation coins!';
+                    gameState.coins += 10;
+                    showNotification('Race finished! +10 coins for participating', 'info');
+                    updateUI();
+                }
+            }, 100);
+        }
+
+        function loadTrainingGame() {
+            document.getElementById('gameContent').innerHTML = `
+                <h3 class="text-xl font-bold mb-4">Trick Training Academy</h3>
+                <div class="text-center mb-6">
+                    <div class="text-6xl mb-4">${gameState.currentPet.emoji}</div>
+                    <p class="text-gray-600">Teach your pet new tricks!</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <button onclick="teachTrick('sit')" class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg transition duration-300">
+                        🪑 Teach "Sit"
+                    </button>
+                    <button onclick="teachTrick('roll')" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg transition duration-300">
+                        🔄 Teach "Roll Over"
+                    </button>
+                    <button onclick="teachTrick('jump')" class="bg-purple-500 hover:bg-purple-600 text-white p-4 rounded-lg transition duration-300">
+                        ⬆️ Teach "Jump"
+                    </button>
+                    <button onclick="teachTrick('speak')" class="bg-orange-500 hover:bg-orange-600 text-white p-4 rounded-lg transition duration-300">
+                        🗣️ Teach "Speak"
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button onclick="closeGame()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Close
+                    </button>
+                </div>
+                <div id="trainingStatus" class="text-center mt-4 font-bold">Select a trick to teach!</div>
+            `;
+        }
+
+        function teachTrick(trick) {
+            const tricks = {
+                sit: { name: 'Sit', emoji: '🪑', difficulty: 1 },
+                roll: { name: 'Roll Over', emoji: '🔄', difficulty: 2 },
+                jump: { name: 'Jump', emoji: '⬆️', difficulty: 3 },
+                speak: { name: 'Speak', emoji: '🗣️', difficulty: 2 }
+            };
+            
+            const selectedTrick = tricks[trick];
+            const success = Math.random() > (selectedTrick.difficulty * 0.2);
+            
+            if (success) {
+                gameState.coins += selectedTrick.difficulty * 15;
+                gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 20);
+                gainExperience(selectedTrick.difficulty * 10);
+                document.getElementById('trainingStatus').textContent = 
+                    `✅ Successfully taught "${selectedTrick.name}"! +${selectedTrick.difficulty * 15} coins`;
+                showNotification(`${gameState.currentPet.name} learned ${selectedTrick.name}!`, 'success');
+            } else {
+                document.getElementById('trainingStatus').textContent = 
+                    `❌ Training failed. ${gameState.currentPet.name} needs more practice!`;
+                showNotification('Training failed, try again!', 'info');
+            }
+            updateUI();
+        }
+
+        function loadTalentShow() {
+            document.getElementById('gameContent').innerHTML = `
+                <h3 class="text-xl font-bold mb-4">⭐ Pet Talent Show ⭐</h3>
+                <div class="text-center mb-6">
+                    <div class="text-8xl mb-4">${gameState.currentPet.emoji}</div>
+                    <p class="text-gray-600">Showcase your pet's amazing talents!</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <button onclick="performTalent('dance')" class="bg-pink-500 hover:bg-pink-600 text-white p-4 rounded-lg transition duration-300">
+                        💃 Dance Performance
+                    </button>
+                    <button onclick="performTalent('sing')" class="bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-lg transition duration-300">
+                        🎤 Singing Act
+                    </button>
+                    <button onclick="performTalent('acrobatics')" class="bg-green-500 hover:bg-green-600 text-white p-4 rounded-lg transition duration-300">
+                        🤸 Acrobatics Show
+                    </button>
+                </div>
+                <div class="text-center">
+                    <button onclick="closeGame()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition duration-300">
+                        Close
+                    </button>
+                </div>
+                <div id="talentStatus" class="text-center mt-4 font-bold">Choose a talent to perform!</div>
+            `;
+        }
+
+        function performTalent(talent) {
+            const talents = {
+                dance: { name: 'Dance', emoji: '💃', multiplier: 1.2 },
+                sing: { name: 'Singing', emoji: '🎤', multiplier: 1.5 },
+                acrobatics: { name: 'Acrobatics', emoji: '🤸', multiplier: 1.8 }
+            };
+            
+            const selectedTalent = talents[talent];
+            const performance = Math.random();
+            let score = 0;
+            let rating = '';
+            
+            if (performance > 0.8) {
+                score = 100;
+                rating = '🌟 Perfect Performance!';
+            } else if (performance > 0.6) {
+                score = 80;
+                rating = '⭐ Great Show!';
+            } else if (performance > 0.4) {
+                score = 60;
+                rating = '👍 Good Effort!';
+            } else {
+                score = 30;
+                rating = '👌 Nice Try!';
+            }
+            
+            const coinReward = Math.floor(score * selectedTalent.multiplier);
+            gameState.coins += coinReward;
+            gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + score / 5);
+            gainExperience(score / 2);
+            
+            document.getElementById('talentStatus').innerHTML = `
+                <div class="text-lg mb-2">${selectedTalent.emoji} ${selectedTalent.name} Performance</div>
+                <div class="text-xl mb-2">${rating}</div>
+                <div class="text-green-600 font-bold">Score: ${score}/100</div>
+                <div class="text-yellow-600 font-bold">Earned: ${coinReward} coins!</div>
+            `;
+            
+            showNotification(`Talent show complete! Earned ${coinReward} coins`, 'success');
+            updateUI();
+        }
+
+        function closeGame() {
+            document.getElementById('gameArea').style.display = 'none';
+        }
+
+        // Shop functions
+        function loadShop() {
+            showShopCategory('food');
+        }
+
+        function showShopCategory(category) {
+            const tabs = document.querySelectorAll('[data-category]');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            
+            const shopItems = document.getElementById('shopItems');
+            shopItems.innerHTML = '';
+            
+            const items = getShopItems(category);
+            
+            items.forEach(item => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'pet-card p-4';
+                itemCard.innerHTML = `
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">${item.emoji}</div>
+                        <h3 class="font-bold mb-1">${item.name}</h3>
+                        <p class="text-sm text-gray-600 mb-3">${item.description}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-yellow-600 font-bold">${item.price} coins</span>
+                            <button onclick="buyItem('${item.id}', ${item.price})" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition duration-300">
+                                Buy
+                            </button>
+                        </div>
+                    </div>
+                `;
+                shopItems.appendChild(itemCard);
+            });
+        }
+
+        function getShopItems(category) {
+            const items = {
+                food: [
+                    { id: 'kibble', name: 'Premium Kibble', emoji: '🥘', price: 20, description: 'High-quality pet food' },
+                    { id: 'treats', name: 'Tasty Treats', emoji: '🍖', price: 15, description: 'Delicious snacks' },
+                    { id: 'fruit', name: 'Fresh Fruit', emoji: '🍎', price: 10, description: 'Healthy natural food' },
+                    { id: 'fish', name: 'Fresh Fish', emoji: '🐟', price: 25, description: 'Protein-rich meal' }
+                ],
+                toys: [
+                    { id: 'ball', name: 'Bouncy Ball', emoji: '⚽', price: 30, description: 'Fun interactive toy' },
+                    { id: 'rope', name: 'Rope Toy', emoji: '🪢', price: 25, description: 'Great for tugging' },
+                    { id: 'mouse', name: 'Toy Mouse', emoji: '🐭', price: 20, description: 'Perfect for cats' },
+                    { id: 'frisbee', name: 'Flying Frisbee', emoji: '🥏', price: 35, description: 'Outdoor fun toy' }
+                ],
+                accessories: [
+                    { id: 'collar', name: 'Designer Collar', emoji: '🎀', price: 50, description: 'Stylish pet collar' },
+                    { id: 'hat', name: 'Cute Hat', emoji: '🎩', price: 40, description: 'Adorable headwear' },
+                    { id: 'bow', name: 'Bow Tie', emoji: '🎀', price: 30, description: 'Formal accessory' },
+                    { id: 'bandana', name: 'Cool Bandana', emoji: '🧣', price: 25, description: 'Trendy neck wear' }
+                ],
+                furniture: [
+                    { id: 'bed', name: 'Luxury Pet Bed', emoji: '🛏️', price: 100, description: 'Comfortable sleeping' },
+                    { id: 'house', name: 'Pet House', emoji: '🏠', price: 200, description: 'Cozy pet shelter' },
+                    { id: 'tree', name: 'Cat Tree', emoji: '🌳', price: 150, description: 'Climbing fun' },
+                    { id: 'feeder', name: 'Auto Feeder', emoji: '🤖', price: 120, description: 'Automatic feeding' }
+                ],
+                medicine: [
+                    { id: 'vitamins', name: 'Pet Vitamins', emoji: '💊', price: 60, description: 'Health supplements' },
+                    { id: 'shampoo', name: 'Pet Shampoo', emoji: '🧴', price: 40, description: 'Gentle cleaning' },
+                    { id: 'brush', name: 'Grooming Brush', emoji: '🪥', price: 35, description: 'Professional grooming' },
+                    { id: 'medicine', name: 'Health Potion', emoji: '⚗️', price: 80, description: 'Instant health boost' }
+                ]
+            };
+            
+            return items[category] || [];
+        }
+
+        function buyItem(itemId, price) {
+            if (gameState.coins >= price) {
+                gameState.coins -= price;
+                
+                // Add item to inventory (simplified)
+                const category = getCurrentShopCategory();
+                if (!gameState.inventory[category]) {
+                    gameState.inventory[category] = [];
+                }
+                gameState.inventory[category].push(itemId);
+                
+                showNotification(`Purchased ${itemId}!`, 'success');
+                updateUI();
+            } else {
+                showNotification('Not enough coins!', 'error');
+            }
+        }
+
+        function getCurrentShopCategory() {
+            const activeTab = document.querySelector('[data-category].active');
+            return activeTab ? activeTab.getAttribute('data-category') : 'food';
+        }
+
+        // Social functions
+        function findFriends() {
+            showNotification('Searching for friends...', 'info');
+            // Simulate finding friends
+            setTimeout(() => {
+                showNotification('Found 3 new
