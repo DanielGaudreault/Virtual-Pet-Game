@@ -4,143 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Virtual Pet Game</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <!-- Login Section -->
-        <div id="loginSection" class="section">
-            <h1>Welcome to Virtual Pet Game</h1>
+        <div id="loginSection" class="section active">
+            <h1>Virtual Pet Game</h1>
             <form id="loginForm">
                 <input type="text" id="username" placeholder="Username" required>
-                <div class="password-container">
-                    <input type="password" id="password" placeholder="Password" required>
-                    <i class="fas fa-eye toggle-password"></i>
-                </div>
+                <input type="password" id="password" placeholder="Password" required>
                 <button type="submit">Login</button>
-                <button type="button" onclick="showSection('register')">Register</button>
             </form>
         </div>
-
-        <!-- Register Section -->
-        <div id="registerSection" class="section" style="display: none;">
-            <h1>Register</h1>
-            <form id="registerForm">
-                <input type="text" id="newUsername" placeholder="Username" required>
-                <div class="password-container">
-                    <input type="password" id="newPassword" placeholder="Password" required>
-                    <i class="fas fa-eye toggle-password"></i>
-                </div>
-                <button type="submit">Register</button>
-                <button type="button" onclick="showSection('login')">Back to Login</button>
-            </form>
-        </div>
-
-        <!-- Main Game Section -->
-        <div id="mainSection" class="section" style="display: none;">
-            <div id="dayNightCycle" class="day-night-cycle day">
-                <div id="weatherEffect" class="weather-effect"></div>
-                <div class="weather-display">
-                    <i id="weatherIcon" class="fas fa-sun"></i>
-                    <span id="weatherText">Sunny</span>
-                </div>
-                <div class="pet-display">
-                    <h2 id="currentPetName">Whiskers</h2>
-                    <div id="currentPetAvatar" class="pet-avatar">🐱</div>
-                    <span id="currentPetMood">😊</span>
-                    <p id="currentPetAge">Age: 3 months</p>
-                </div>
-                <div class="stats-container">
-                    <div class="stat">
-                        <span>Health</span>
-                        <div class="progress-bar"><div id="healthBar" class="progress"></div></div>
-                        <span id="healthValue">85/100</span>
-                    </div>
-                    <div class="stat">
-                        <span>Hunger</span>
-                        <div class="progress-bar"><div id="hungerBar" class="progress"></div></div>
-                        <span id="hungerValue">60/100</span>
-                    </div>
-                    <div class="stat">
-                        <span>Happiness</span>
-                        <div class="progress-bar"><div id="happinessBar" class="progress"></div></div>
-                        <span id="happinessValue">75/100</span>
-                    </div>
-                    <div class="stat">
-                        <span>Energy</span>
-                        <div class="progress-bar"><div id="energyBar" class="progress"></div></div>
-                        <span id="energyValue">90/100</span>
-                    </div>
-                    <div class="stat">
-                        <span>Cleanliness</span>
-                        <div class="progress-bar"><div id="cleanlinessBar" class="progress"></div></div>
-                        <span id="cleanlinessValue">70/100</span>
-                    </div>
-                    <div class="stat">
-                        <span>Experience</span>
-                        <div class="progress-bar"><div id="experienceBar" class="progress"></div></div>
-                        <span id="experienceValue">150/200</span>
-                    </div>
-                </div>
-                <div class="quick-actions">
-                    <button onclick="feedPet()">Feed</button>
-                    <button onclick="playWithPet()">Play</button>
-                    <button onclick="cleanPet()">Clean</button>
-                    <button onclick="sleepPet()">Sleep</button>
-                    <button onclick="takeToVet()">Vet</button>
-                </div>
-                <div class="user-stats">
-                    <span>Coins: <span id="userCoins">100</span></span>
-                    <span>Level: <span id="userLevel">1</span></span>
-                </div>
-                <div class="navigation">
-                    <button class="navigation-tab active" data-section="main">Main</button>
-                    <button class="navigation-tab" data-section="pets">Pets</button>
-                    <button class="navigation-tab" data-section="house">House</button>
-                    <button class="navigation-tab" data-section="shop">Shop</button>
-                    <button class="navigation-tab" data-section="stats">Stats</button>
-                    <button onclick="logout()">Logout</button>
-                </div>
+        <div id="mainSection" class="section">
+            <div class="pet-display">
+                <h2 id="currentPetName">Whiskers</h2>
+                <div id="currentPetAvatar">🐱</div>
+                <p id="currentPetMood">😊</p>
+                <p id="currentPetAge">Age: 3 months</p>
+            </div>
+            <div class="stats-container">
+                <div class="stat">Health: <span id="healthValue">85/100</span></div>
+                <div class="stat">Hunger: <span id="hungerValue">60/100</span></div>
+                <div class="stat">Happiness: <span id="happinessValue">75/100</span></div>
+            </div>
+            <div class="quick-actions">
+                <button onclick="feedPet()">Feed</button>
+                <button onclick="playWithPet()">Play</button>
+            </div>
+            <div class="navigation">
+                <button class="navigation-tab active" data-section="main">Main</button>
+                <button class="navigation-tab" data-section="login">Login</button>
             </div>
         </div>
-
-        <!-- Pets Section -->
-        <div id="petsSection" class="section" style="display: none;">
-            <h1>Your Pets</h1>
-            <div id="petCollection"></div>
-            <button onclick="createNewPet()">Create New Pet</button>
-        </div>
-
-        <!-- House Section -->
-        <div id="houseSection" class="section" style="display: none;">
-            <h1>House Designer</h1>
-            <div id="houseDesigner">
-                <canvas id="houseCanvas" width="400" height="300"></canvas>
-                <div class="house-controls">
-                    <button onclick="addFurniture('bed')">Add Bed</button>
-                    <button onclick="addFurniture('lamp')">Add Lamp</button>
-                    <button onclick="clearHouse()">Clear House</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Shop Section -->
-        <div id="shopSection" class="section" style="display: none;">
-            <h1>Shop</h1>
-            <div id="shopItems"></div>
-        </div>
-
-        <!-- Stats Section -->
-        <div id="statsSection" class="section" style="display: none;">
-            <h1>Statistics</h1>
-            <canvas id="statsChart" width="400" height="200"></canvas>
-        </div>
-
-        <!-- Notification Area -->
         <div id="notificationArea"></div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
