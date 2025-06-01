@@ -3,760 +3,1787 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Pet Game - Take Care of Your Digital Friend</title>
+    <title>Ultimate Virtual Pet Paradise</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Open+Sans:wght@400;600;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .game-title {
+            font-family: 'Fredoka One', cursive;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
         .pet-container {
-            perspective: 1000px;
-        }
-        
-        .pet {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            position: relative;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
             transition: all 0.3s ease;
-            transform-style: preserve-3d;
         }
         
-        .pet.happy {
-            animation: bounce 0.5s ease-in-out;
+        .pet-sprite {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 20px auto;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            animation: petBreathe 2s ease-in-out infinite;
         }
         
-        .pet.sleeping {
-            filter: brightness(0.7);
-            animation: breathe 2s ease-in-out infinite;
-        }
-        
-        .pet.dirty {
-            filter: sepia(0.3) brightness(0.8);
-        }
-        
-        .pet.hungry {
-            animation: shake 0.5s ease-in-out;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-        
-        @keyframes breathe {
+        @keyframes petBreathe {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
         }
         
+        .pet-sprite:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .pet-sprite.happy {
+            animation: petJump 0.6s ease-in-out;
+        }
+        
+        @keyframes petJump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
         .status-bar {
-            transition: width 0.3s ease;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
         
-        .notification {
-            animation: slideIn 0.3s ease-out;
+        .status-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
         }
         
-        @keyframes slideIn {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .status-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
         }
         
-        .game-button {
-            transition: all 0.2s ease;
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
         
-        .game-button:hover {
+        .hunger { background: linear-gradient(90deg, #ff6b6b, #ee5a52); }
+        .happiness { background: linear-gradient(90deg, #4ecdc4, #44a08d); }
+        .cleanliness { background: linear-gradient(90deg, #45b7d1, #3498db); }
+        .energy { background: linear-gradient(90deg, #96ceb4, #27ae60); }
+        .health { background: linear-gradient(90deg, #f093fb, #f5576c); }
+        .intelligence { background: linear-gradient(90deg, #ffecd2, #fcb69f); }
+        
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .action-btn:hover {
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
         
-        .game-button:active {
+        .action-btn:active {
             transform: translateY(0);
         }
         
-        .pet-eyes {
-            position: absolute;
-            top: 30%;
-            width: 100%;
-            height: 20px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-        
-        .eye {
-            width: 8px;
-            height: 8px;
-            background: black;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        
-        .pet.sleeping .eye {
-            height: 2px;
-            border-radius: 0;
-        }
-        
-        .pet-mouth {
-            position: absolute;
-            top: 55%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 10px;
-            border: 2px solid black;
-            border-top: none;
-            border-radius: 0 0 20px 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .pet.happy .pet-mouth {
-            border-color: #10B981;
-        }
-        
-        .pet.hungry .pet-mouth {
-            border-color: #EF4444;
-        }
-        
-        .floating-hearts {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none;
-        }
-        
-        .heart {
-            animation: floatUp 1s ease-out forwards;
-            font-size: 20px;
-            color: #EF4444;
-        }
-        
-        @keyframes floatUp {
-            from {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-            to {
-                transform: translateY(-50px) scale(0.5);
-                opacity: 0;
-            }
-        }
-        
         .mini-game {
-            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 10px 0;
+        }
+        
+        .pet-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        
+        .pet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        
+        .pet-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+        }
+        
+        .achievement {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #e17055;
+        }
+        
+        .weather {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .day-night-cycle {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            pointer-events: none;
+            z-index: -1;
+            transition: background 2s ease;
         }
         
-        .mini-game.active {
-            display: flex;
+        .day-night-cycle.day {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
-        .click-target {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+        .day-night-cycle.night {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        }
+        
+        .shop-item {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            border: 2px solid #e2e8f0;
             cursor: pointer;
-            transition: all 0.2s ease;
-            animation: pulse 1s ease-in-out infinite;
+            transition: all 0.3s ease;
         }
         
-        .click-target:hover {
-            transform: scale(1.1);
+        .shop-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
         }
         
-        .achievement {
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .hidden { display: none; }
+        
+        .notification {
             position: fixed;
             top: 20px;
-            right: 20px;
-            background: linear-gradient(45deg, #FFD700, #FFA500);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4ecdc4;
             color: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            animation: achievementSlide 3s ease-in-out;
+            padding: 15px 25px;
+            border-radius: 25px;
             z-index: 1001;
+            animation: slideDown 0.5s ease;
         }
         
-        @keyframes achievementSlide {
-            0%, 100% { transform: translateX(300px); }
-            20%, 80% { transform: translateX(0); }
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .game-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .game-card:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+        
+        .game-card.matched {
+            background: #4ecdc4;
+            color: white;
+            border-color: #44a08d;
+        }
+        
+        .pet-stats-chart {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+        }
+        
+        .environment-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            transition: all 0.5s ease;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            font-size: 20px;
+            color: #ff6b6b;
+            animation: floatUp 2s ease-out forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes floatUp {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+        }
+        
+        .pet-trait {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin: 5px;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .evolution-stage {
+            text-align: center;
+            padding: 20px;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 min-h-screen">
+<body>
+    <div class="day-night-cycle day" id="dayNightCycle"></div>
+    
+    <!-- Weather Widget -->
+    <div class="weather" id="weatherWidget">
+        <i class="fas fa-sun text-yellow-500"></i>
+        <span class="ml-2">Sunny</span>
+    </div>
+    
+    <!-- Main Game Container -->
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
         <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-white mb-2">🐾 Virtual Pet Game</h1>
-            <p class="text-white text-lg">Take care of your digital friend!</p>
+            <h1 class="game-title text-6xl font-bold mb-4">🌟 Virtual Pet Paradise 🌟</h1>
+            <div class="flex justify-center items-center space-x-6">
+                <div class="bg-white rounded-full px-4 py-2 shadow-lg">
+                    <i class="fas fa-coins text-yellow-500"></i>
+                    <span class="ml-2 font-bold" id="coins">100</span>
+                </div>
+                <div class="bg-white rounded-full px-4 py-2 shadow-lg">
+                    <i class="fas fa-trophy text-purple-500"></i>
+                    <span class="ml-2 font-bold" id="level">1</span>
+                </div>
+                <div class="bg-white rounded-full px-4 py-2 shadow-lg">
+                    <i class="fas fa-star text-blue-500"></i>
+                    <span class="ml-2 font-bold" id="experience">0/100</span>
+                </div>
+            </div>
         </header>
-
-        <!-- Game Area -->
-        <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-8">
-            <!-- Pet Info -->
-            <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2" id="petName">Buddy</h2>
-                <p class="text-gray-600">Level <span id="petLevel">1</span> • Age <span id="petAge">0</span> days</p>
-                <p class="text-sm text-gray-500">Coins: <span id="coins" class="text-yellow-600 font-bold">50</span></p>
+        
+        <!-- Pet Selection Screen -->
+        <div id="petSelectionScreen" class="max-w-6xl mx-auto">
+            <h2 class="text-3xl font-bold text-white text-center mb-8">Choose Your Virtual Pet</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="pet-card" data-pet="cat">
+                    <div class="text-6xl text-center mb-4">🐱</div>
+                    <h3 class="text-xl font-bold text-center">Cat</h3>
+                    <p class="text-gray-600 text-center">Independent and playful</p>
+                    <div class="mt-3">
+                        <span class="pet-trait">Curious</span>
+                        <span class="pet-trait">Agile</span>
+                        <span class="pet-trait">Sleepy</span>
+                    </div>
+                </div>
+                <div class="pet-card" data-pet="dog">
+                    <div class="text-6xl text-center mb-4">🐕</div>
+                    <h3 class="text-xl font-bold text-center">Dog</h3>
+                    <p class="text-gray-600 text-center">Loyal and energetic</p>
+                    <div class="mt-3">
+                        <span class="pet-trait">Loyal</span>
+                        <span class="pet-trait">Energetic</span>
+                        <span class="pet-trait">Friendly</span>
+                    </div>
+                </div>
+                <div class="pet-card" data-pet="bird">
+                    <div class="text-6xl text-center mb-4">🦜</div>
+                    <h3 class="text-xl font-bold text-center">Bird</h3>
+                    <p class="text-gray-600 text-center">Intelligent and social</p>
+                    <div class="mt-3">
+                        <span class="pet-trait">Smart</span>
+                        <span class="pet-trait">Social</span>
+                        <span class="pet-trait">Musical</span>
+                    </div>
+                </div>
+                <div class="pet-card" data-pet="fish">
+                    <div class="text-6xl text-center mb-4">🐠</div>
+                    <h3 class="text-xl font-bold text-center">Fish</h3>
+                    <p class="text-gray-600 text-center">Calm and graceful</p>
+                    <div class="mt-3">
+                        <span class="pet-trait">Peaceful</span>
+                        <span class="pet-trait">Graceful</span>
+                        <span class="pet-trait">Zen</span>
+                    </div>
+                </div>
+                <div class="pet-card" data-pet="hamster">
+                    <div class="text-6xl text-center mb-4">🐹</div>
+                    <h3 class="text-xl font-bold text-center">Hamster</h3>
+                    <p class="text-gray-600 text-center">Small and adorable</p>
+                    <div class="mt-3">
+                        <span class="pet-trait">Tiny</span>
+                        <span class="pet-trait">Active</span>
+                        <span class="pet-trait">Cute</span>
+                    </div>
+                </div>
+                <div class="pet-card" data-pet="rabbit">
+                    <div class="text-6xl text-center mb-4">🐰</div>
+                    <h3 class="text-xl font-bold text-center">Rabbit</h3>
+                    <p class="text-gray-600 text-center">Gentle and hopeful</p>
+                    <div class="mt-3">
+                        <span class="pet-trait">Gentle</span>
+                        <span class="pet-trait">Quick</span>
+                        <span class="pet-trait">Soft</span>
+                    </div>
+                </div>
             </div>
-
-            <!-- Pet Display -->
-            <div class="pet-container flex justify-center mb-8">
-                <div class="relative">
-                    <div id="pet" class="pet mx-auto relative" style="background: linear-gradient(45deg, #FF6B6B, #4ECDC4);">
-                        <div class="pet-eyes">
-                            <div class="eye"></div>
-                            <div class="eye"></div>
+            <div class="text-center mt-8">
+                <button class="action-btn text-lg px-8 py-3" onclick="confirmPetSelection()">
+                    <i class="fas fa-heart mr-2"></i>Start Your Journey
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Game Screen -->
+        <div id="gameScreen" class="hidden max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Pet Display Area -->
+                <div class="lg:col-span-2">
+                    <div class="pet-container relative p-8">
+                        <div class="environment-bg" id="environmentBg"></div>
+                        <div class="relative z-10">
+                            <div class="text-center mb-6">
+                                <h2 class="text-2xl font-bold mb-2" id="petName">Your Pet</h2>
+                                <p class="text-gray-600" id="petMood">Feeling Happy</p>
+                            </div>
+                            
+                            <!-- Pet Sprite -->
+                            <div class="pet-sprite" id="petSprite" onclick="petPet()">
+                                🐱
+                            </div>
+                            
+                            <!-- Pet Info -->
+                            <div class="text-center mt-4">
+                                <div class="evolution-stage mb-4">
+                                    <h3 class="font-bold">Evolution Stage</h3>
+                                    <p id="evolutionStage">Baby</p>
+                                    <div class="mt-2">
+                                        <div class="status-bar">
+                                            <div class="status-fill bg-purple-500" id="evolutionProgress" style="width: 10%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p class="font-semibold">Age: <span id="petAge">0 days</span></p>
+                                        <p class="font-semibold">Weight: <span id="petWeight">1.0 kg</span></p>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold">Type: <span id="petType">Cat</span></p>
+                                        <p class="font-semibold">Color: <span id="petColor">Orange</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                                <button class="action-btn" onclick="feedPet()">
+                                    <i class="fas fa-utensils mb-2"></i><br>Feed
+                                </button>
+                                <button class="action-btn" onclick="cleanPet()">
+                                    <i class="fas fa-shower mb-2"></i><br>Clean
+                                </button>
+                                <button class="action-btn" onclick="playWithPet()">
+                                    <i class="fas fa-gamepad mb-2"></i><br>Play
+                                </button>
+                                <button class="action-btn" onclick="putPetToSleep()">
+                                    <i class="fas fa-bed mb-2"></i><br>Sleep
+                                </button>
+                            </div>
                         </div>
-                        <div class="pet-mouth"></div>
                     </div>
-                    <div id="floatingHearts" class="floating-hearts"></div>
+                    
+                    <!-- Mini Games Section -->
+                    <div class="mt-8">
+                        <h3 class="text-2xl font-bold text-white mb-4">🎮 Mini Games</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="mini-game">
+                                <h4 class="font-bold mb-2">🧠 Memory Match</h4>
+                                <p class="text-sm text-gray-600 mb-3">Test your memory skills!</p>
+                                <button class="action-btn w-full" onclick="startMemoryGame()">Play</button>
+                            </div>
+                            <div class="mini-game">
+                                <h4 class="font-bold mb-2">🦴 Catch the Treat</h4>
+                                <p class="text-sm text-gray-600 mb-3">Help your pet catch falling treats!</p>
+                                <button class="action-btn w-full" onclick="startCatchGame()">Play</button>
+                            </div>
+                            <div class="mini-game">
+                                <h4 class="font-bold mb-2">🧩 Puzzle Game</h4>
+                                <p class="text-sm text-gray-600 mb-3">Solve puzzles together!</p>
+                                <button class="action-btn w-full" onclick="startPuzzleGame()">Play</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Status Panel -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-xl font-bold mb-4">📊 Pet Status</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">❤️ Health</span>
+                                    <span class="text-sm" id="healthText">100%</span>
+                                </div>
+                                <div class="status-bar">
+                                    <div class="status-fill health" id="healthBar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">🍽️ Hunger</span>
+                                    <span class="text-sm" id="hungerText">80%</span>
+                                </div>
+                                <div class="status-bar">
+                                    <div class="status-fill hunger" id="hungerBar" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">😊 Happiness</span>
+                                    <span class="text-sm" id="happinessText">75%</span>
+                                </div>
+                                <div class="status-bar">
+                                    <div class="status-fill happiness" id="happinessBar" style="width: 75%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">🧼 Cleanliness</span>
+                                    <span class="text-sm" id="cleanlinessText">90%</span>
+                                </div>
+                                <div class="status-bar">
+                                    <div class="status-fill cleanliness" id="cleanlinessBar" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">⚡ Energy</span>
+                                    <span class="text-sm" id="energyText">85%</span>
+                                </div>
+                                <div class="status-bar">
+                                    <div class="status-fill energy" id="energyBar" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium">🧠 Intelligence</span>
+                                    <span class="text-sm" id="intelligenceText">60%</span>
+                                </div>
+                                <div class="status-bar">
+                                    <div class="status-fill intelligence" id="intelligenceBar" style="width: 60%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Chart -->
+                        <div class="mt-6">
+                            <canvas id="statsChart" class="pet-stats-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-xl font-bold mb-4">⚡ Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="action-btn w-full" onclick="openShop()">
+                                <i class="fas fa-shopping-cart mr-2"></i>Pet Shop
+                            </button>
+                            <button class="action-btn w-full" onclick="openCustomization()">
+                                <i class="fas fa-palette mr-2"></i>Customize
+                            </button>
+                            <button class="action-btn w-full" onclick="openAchievements()">
+                                <i class="fas fa-trophy mr-2"></i>Achievements
+                            </button>
+                            <button class="action-btn w-full" onclick="visitVet()">
+                                <i class="fas fa-user-md mr-2"></i>Vet Visit
+                            </button>
+                            <button class="action-btn w-full" onclick="trainPet()">
+                                <i class="fas fa-graduation-cap mr-2"></i>Training
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Achievements Preview -->
+                    <div class="bg-white rounded-xl p-6 shadow-lg">
+                        <h3 class="text-xl font-bold mb-4">🏆 Recent Achievements</h3>
+                        <div id="recentAchievements">
+                            <div class="achievement">
+                                <i class="fas fa-baby text-pink-500 mr-2"></i>
+                                <strong>First Pet</strong><br>
+                                <small>Adopted your first virtual pet!</small>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Status Bars -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div class="bg-gray-100 rounded-lg p-4">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-utensils text-orange-500 mr-2"></i>
-                        <span class="font-semibold">Hunger</span>
+        </div>
+    </div>
+    
+    <!-- Pet Shop Modal -->
+    <div id="shopModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">🛒 Pet Shop</h2>
+                <button onclick="closeModal('shopModal')" class="text-2xl">&times;</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="shop-item">
+                    <div class="text-3xl mb-2">🍎</div>
+                    <h4 class="font-bold">Premium Food</h4>
+                    <p class="text-sm text-gray-600">Nutritious meal (+30 hunger)</p>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="font-bold text-yellow-600">25 🪙</span>
+                        <button class="action-btn" onclick="buyItem('premium_food', 25)">Buy</button>
                     </div>
-                    <div class="w-full bg-gray-300 rounded-full h-3">
-                        <div id="hungerBar" class="status-bar bg-orange-500 h-3 rounded-full" style="width: 80%"></div>
-                    </div>
-                    <span id="hungerText" class="text-sm text-gray-600">80/100</span>
                 </div>
-
-                <div class="bg-gray-100 rounded-lg p-4">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-smile text-green-500 mr-2"></i>
-                        <span class="font-semibold">Happiness</span>
+                <div class="shop-item">
+                    <div class="text-3xl mb-2">🧸</div>
+                    <h4 class="font-bold">Toy Bear</h4>
+                    <p class="text-sm text-gray-600">Fun toy (+20 happiness)</p>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="font-bold text-yellow-600">50 🪙</span>
+                        <button class="action-btn" onclick="buyItem('toy_bear', 50)">Buy</button>
                     </div>
-                    <div class="w-full bg-gray-300 rounded-full h-3">
-                        <div id="happinessBar" class="status-bar bg-green-500 h-3 rounded-full" style="width: 75%"></div>
-                    </div>
-                    <span id="happinessText" class="text-sm text-gray-600">75/100</span>
                 </div>
-
-                <div class="bg-gray-100 rounded-lg p-4">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-tint text-blue-500 mr-2"></i>
-                        <span class="font-semibold">Clean</span>
+                <div class="shop-item">
+                    <div class="text-3xl mb-2">🎀</div>
+                    <h4 class="font-bold">Bow Tie</h4>
+                    <p class="text-sm text-gray-600">Stylish accessory</p>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="font-bold text-yellow-600">75 🪙</span>
+                        <button class="action-btn" onclick="buyItem('bow_tie', 75)">Buy</button>
                     </div>
-                    <div class="w-full bg-gray-300 rounded-full h-3">
-                        <div id="cleanBar" class="status-bar bg-blue-500 h-3 rounded-full" style="width: 90%"></div>
-                    </div>
-                    <span id="cleanText" class="text-sm text-gray-600">90/100</span>
                 </div>
-
-                <div class="bg-gray-100 rounded-lg p-4">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-bed text-purple-500 mr-2"></i>
-                        <span class="font-semibold">Energy</span>
+                <div class="shop-item">
+                    <div class="text-3xl mb-2">💊</div>
+                    <h4 class="font-bold">Health Potion</h4>
+                    <p class="text-sm text-gray-600">Restores health (+50 health)</p>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="font-bold text-yellow-600">100 🪙</span>
+                        <button class="action-btn" onclick="buyItem('health_potion', 100)">Buy</button>
                     </div>
-                    <div class="w-full bg-gray-300 rounded-full h-3">
-                        <div id="energyBar" class="status-bar bg-purple-500 h-3 rounded-full" style="width: 85%"></div>
+                </div>
+                <div class="shop-item">
+                    <div class="text-3xl mb-2">🏠</div>
+                    <h4 class="font-bold">Luxury Home</h4>
+                    <p class="text-sm text-gray-600">Upgrade environment</p>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="font-bold text-yellow-600">200 🪙</span>
+                        <button class="action-btn" onclick="buyItem('luxury_home', 200)">Buy</button>
                     </div>
-                    <span id="energyText" class="text-sm text-gray-600">85/100</span>
+                </div>
+                <div class="shop-item">
+                    <div class="text-3xl mb-2">📚</div>
+                    <h4 class="font-bold">Training Book</h4>
+                    <p class="text-sm text-gray-600">Increase intelligence (+25 IQ)</p>
+                    <div class="flex justify-between items-center mt-3">
+                        <span class="font-bold text-yellow-600">80 🪙</span>
+                        <button class="action-btn" onclick="buyItem('training_book', 80)">Buy</button>
+                    </div>
                 </div>
             </div>
-
-            <!-- Action Buttons -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <button id="feedBtn" class="game-button bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg">
-                    <i class="fas fa-utensils text-xl mb-2 block"></i>
-                    Feed (5 coins)
-                </button>
-
-                <button id="playBtn" class="game-button bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg">
-                    <i class="fas fa-gamepad text-xl mb-2 block"></i>
-                    Play Game
-                </button>
-
-                <button id="cleanBtn" class="game-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg">
-                    <i class="fas fa-shower text-xl mb-2 block"></i>
-                    Clean (3 coins)
-                </button>
-
-                <button id="sleepBtn" class="game-button bg-purple-500 hover:bg-purple-600 text-white font-bold py-4 px-6 rounded-lg shadow-lg">
-                    <i class="fas fa-bed text-xl mb-2 block"></i>
-                    Sleep
-                </button>
+        </div>
+    </div>
+    
+    <!-- Customization Modal -->
+    <div id="customizationModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">🎨 Customize Your Pet</h2>
+                <button onclick="closeModal('customizationModal')" class="text-2xl">&times;</button>
             </div>
-
-            <!-- Customization -->
-            <div class="bg-gray-100 rounded-lg p-6 mb-6">
-                <h3 class="text-lg font-bold mb-4">Customize Your Pet</h3>
-                <div class="grid grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Pet Color</label>
-                        <select id="petColor" class="w-full p-2 border rounded">
-                            <option value="linear-gradient(45deg, #FF6B6B, #4ECDC4)">Coral & Teal</option>
-                            <option value="linear-gradient(45deg, #FFD93D, #FF6B6B)">Yellow & Red</option>
-                            <option value="linear-gradient(45deg, #6BCF7F, #4D79A4)">Green & Blue</option>
-                            <option value="linear-gradient(45deg, #9B59B6, #3498DB)">Purple & Blue</option>
-                        </select>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Pet Name</h3>
+                    <input type="text" id="customPetName" class="w-full p-3 border rounded-lg" placeholder="Enter pet name">
+                    
+                    <h3 class="text-xl font-bold mb-4 mt-6">Pet Color</h3>
+                    <div class="grid grid-cols-4 gap-3">
+                        <button class="w-12 h-12 rounded-full bg-orange-500" onclick="changePetColor('orange')"></button>
+                        <button class="w-12 h-12 rounded-full bg-gray-500" onclick="changePetColor('gray')"></button>
+                        <button class="w-12 h-12 rounded-full bg-brown-500" onclick="changePetColor('brown')"></button>
+                        <button class="w-12 h-12 rounded-full bg-black" onclick="changePetColor('black')"></button>
+                        <button class="w-12 h-12 rounded-full bg-white border" onclick="changePetColor('white')"></button>
+                        <button class="w-12 h-12 rounded-full bg-yellow-500" onclick="changePetColor('yellow')"></button>
+                        <button class="w-12 h-12 rounded-full bg-pink-500" onclick="changePetColor('pink')"></button>
+                        <button class="w-12 h-12 rounded-full bg-blue-500" onclick="changePetColor('blue')"></button>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Pet Name</label>
-                        <input id="petNameInput" type="text" class="w-full p-2 border rounded" placeholder="Enter name">
+                    
+                    <h3 class="text-xl font-bold mb-4 mt-6">Environment</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="action-btn" onclick="changeEnvironment('park')">🌳 Park</button>
+                        <button class="action-btn" onclick="changeEnvironment('beach')">🏖️ Beach</button>
+                        <button class="action-btn" onclick="changeEnvironment('garden')">🌺 Garden</button>
+                        <button class="action-btn" onclick="changeEnvironment('space')">🚀 Space</button>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">Actions</label>
-                        <button id="saveBtn" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded">
-                            Save Game
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Accessories</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="action-btn" onclick="toggleAccessory('hat')">🎩 Hat</button>
+                        <button class="action-btn" onclick="toggleAccessory('glasses')">🕶️ Glasses</button>
+                        <button class="action-btn" onclick="toggleAccessory('bow')">🎀 Bow</button>
+                        <button class="action-btn" onclick="toggleAccessory('collar')">📿 Collar</button>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <button class="action-btn w-full" onclick="saveCustomization()">
+                            <i class="fas fa-save mr-2"></i>Save Changes
                         </button>
                     </div>
                 </div>
             </div>
-
-            <!-- Achievements -->
-            <div class="bg-gray-100 rounded-lg p-6">
-                <h3 class="text-lg font-bold mb-4">Achievements</h3>
-                <div id="achievements" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <!-- Achievements will be populated by JavaScript -->
-                </div>
+        </div>
+    </div>
+    
+    <!-- Achievements Modal -->
+    <div id="achievementsModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">🏆 Achievements</h2>
+                <button onclick="closeModal('achievementsModal')" class="text-2xl">&times;</button>
+            </div>
+            <div id="achievementsList" class="space-y-4">
+                <!-- Achievements will be populated by JavaScript -->
             </div>
         </div>
-
-        <!-- Notifications -->
-        <div id="notifications" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"></div>
-
-        <!-- Mini Game Modal -->
-        <div id="miniGame" class="mini-game">
-            <div class="bg-white rounded-lg p-8 text-center max-w-md mx-4">
-                <h3 class="text-2xl font-bold mb-4">Click the Targets!</h3>
-                <p class="mb-4">Score: <span id="gameScore">0</span></p>
-                <p class="mb-4">Time: <span id="gameTime">10</span>s</p>
-                <div id="gameArea" class="relative bg-gray-200 rounded-lg mx-auto mb-4" style="width: 300px; height: 200px;">
-                    <!-- Click targets will appear here -->
-                </div>
-                <button id="closeGame" class="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
-                    Close Game
-                </button>
+    </div>
+    
+    <!-- Memory Game Modal -->
+    <div id="memoryGameModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">🧠 Memory Match Game</h2>
+                <button onclick="closeModal('memoryGameModal')" class="text-2xl">&times;</button>
+            </div>
+            <div class="text-center mb-4">
+                <p>Score: <span id="memoryScore">0</span> | Moves: <span id="memoryMoves">0</span></p>
+            </div>
+            <div class="game-grid" id="memoryGameGrid">
+                <!-- Game cards will be generated by JavaScript -->
+            </div>
+            <div class="text-center mt-4">
+                <button class="action-btn" onclick="resetMemoryGame()">Reset Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Catch Game Modal -->
+    <div id="catchGameModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">🦴 Catch the Treat</h2>
+                <button onclick="closeModal('catchGameModal')" class="text-2xl">&times;</button>
+            </div>
+            <div class="text-center mb-4">
+                <p>Score: <span id="catchScore">0</span> | Lives: <span id="catchLives">3</span></p>
+            </div>
+            <div id="catchGameArea" style="height: 400px; background: #e2e8f0; border-radius: 10px; position: relative; overflow: hidden;">
+                <div id="catcher" style="width: 60px; height: 60px; background: #667eea; border-radius: 50%; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px;">🐱</div>
+            </div>
+            <div class="text-center mt-4">
+                <button class="action-btn" id="startCatchBtn" onclick="startCatchGameplay()">Start Game</button>
+                <button class="action-btn" onclick="resetCatchGame()">Reset</button>
             </div>
         </div>
     </div>
 
     <script>
-        class VirtualPet {
-            constructor() {
-                this.stats = {
-                    hunger: 80,
-                    happiness: 75,
-                    cleanliness: 90,
-                    energy: 85
-                };
-                
-                this.pet = {
-                    name: 'Buddy',
-                    level: 1,
-                    age: 0,
-                    experience: 0
-                };
-                
-                this.player = {
-                    coins: 50
-                };
-                
-                this.achievements = [
-                    { id: 'first_feed', name: 'First Meal', desc: 'Feed your pet for the first time', unlocked: false },
-                    { id: 'clean_master', name: 'Clean Master', desc: 'Keep pet clean for 5 actions', unlocked: false },
-                    { id: 'happy_pet', name: 'Happy Pet', desc: 'Reach 100 happiness', unlocked: false },
-                    { id: 'level_up', name: 'Growing Up', desc: 'Reach level 2', unlocked: false },
-                    { id: 'rich_player', name: 'Rich Player', desc: 'Earn 100 coins', unlocked: false },
-                    { id: 'game_master', name: 'Game Master', desc: 'Score 20 in mini game', unlocked: false },
-                    { id: 'pet_care', name: 'Pet Care', desc: 'Play for 5 minutes', unlocked: false },
-                    { id: 'night_owl', name: 'Night Owl', desc: 'Put pet to sleep 3 times', unlocked: false }
-                ];
-                
-                this.gameState = {
-                    isSleeping: false,
-                    lastUpdate: Date.now(),
-                    cleanStreak: 0,
-                    sleepCount: 0,
-                    startTime: Date.now()
-                };
-                
-                this.init();
+        // Game State
+        let gameState = {
+            selectedPet: null,
+            petStats: {
+                health: 100,
+                hunger: 80,
+                happiness: 75,
+                cleanliness: 90,
+                energy: 85,
+                intelligence: 60
+            },
+            petInfo: {
+                name: 'Your Pet',
+                type: 'cat',
+                color: 'orange',
+                age: 0,
+                weight: 1.0,
+                evolutionStage: 'baby',
+                evolutionProgress: 10,
+                accessories: [],
+                environment: 'park'
+            },
+            gameData: {
+                coins: 100,
+                level: 1,
+                experience: 0,
+                achievements: ['first_pet'],
+                inventory: [],
+                totalPlayTime: 0
+            },
+            gameSettings: {
+                isDay: true,
+                weather: 'sunny',
+                gameSpeed: 1
+            }
+        };
+        
+        // Pet Types Data
+        const petTypes = {
+            cat: { emoji: '🐱', traits: ['Curious', 'Agile', 'Sleepy'], baseStats: { hunger: -2, happiness: +1, energy: -1 } },
+            dog: { emoji: '🐕', traits: ['Loyal', 'Energetic', 'Friendly'], baseStats: { hunger: -3, happiness: +2, energy: -2 } },
+            bird: { emoji: '🦜', traits: ['Smart', 'Social', 'Musical'], baseStats: { intelligence: +2, happiness: +1, hunger: -1 } },
+            fish: { emoji: '🐠', traits: ['Peaceful', 'Graceful', 'Zen'], baseStats: { cleanliness: +1, happiness: +1, hunger: -1 } },
+            hamster: { emoji: '🐹', traits: ['Tiny', 'Active', 'Cute'], baseStats: { energy: +1, happiness: +2, hunger: -2 } },
+            rabbit: { emoji: '🐰', traits: ['Gentle', 'Quick', 'Soft'], baseStats: { happiness: +1, cleanliness: +1, hunger: -1 } }
+        };
+        
+        // Achievement definitions
+        const achievements = {
+            first_pet: { name: 'First Pet', description: 'Adopted your first virtual pet!', icon: '🐾', unlocked: true },
+            happy_pet: { name: 'Happy Pet', description: 'Keep happiness above 90% for 5 minutes', icon: '😊', unlocked: false },
+            healthy_pet: { name: 'Healthy Pet', description: 'Maintain perfect health for 24 hours', icon: '❤️', unlocked: false },
+            smart_pet: { name: 'Smart Pet', description: 'Raise intelligence to 100%', icon: '🧠', unlocked: false },
+            game_master: { name: 'Game Master', description: 'Win 10 mini-games', icon: '🎮', unlocked: false },
+            wealthy_owner: { name: 'Wealthy Owner', description: 'Accumulate 1000 coins', icon: '💰', unlocked: false },
+            pet_evolution: { name: 'Evolution Master', description: 'Evolve your pet to adult stage', icon: '🌟', unlocked: false }
+        };
+        
+        // Weather patterns
+        const weatherPatterns = ['sunny', 'cloudy', 'rainy', 'snowy'];
+        const weatherIcons = {
+            sunny: '☀️',
+            cloudy: '☁️',
+            rainy: '🌧️',
+            snowy: '❄️'
+        };
+        
+        // Initialize Game
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGameState();
+            initializeWeather();
+            initializeDayNightCycle();
+            startGameLoop();
+            updateDisplay();
+        });
+        
+        // Pet Selection
+        function confirmPetSelection() {
+            const selectedCard = document.querySelector('.pet-card.selected');
+            if (!selectedCard) {
+                showNotification('Please select a pet first!', 'warning');
+                return;
             }
             
-            init() {
-                this.loadGame();
-                this.bindEvents();
-                this.updateDisplay();
-                this.startGameLoop();
-                this.renderAchievements();
+            gameState.selectedPet = selectedCard.dataset.pet;
+            gameState.petInfo.type = gameState.selectedPet;
+            gameState.petInfo.name = capitalizeFirst(gameState.selectedPet);
+            
+            document.getElementById('petSelectionScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            updatePetDisplay();
+            initializeStatsChart();
+            showNotification('Welcome to your new pet adventure!', 'success');
+            unlockAchievement('first_pet');
+        }
+        
+        // Pet card selection
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.pet-card')) {
+                document.querySelectorAll('.pet-card').forEach(card => card.classList.remove('selected'));
+                e.target.closest('.pet-card').classList.add('selected');
+            }
+        });
+        
+        // Pet Actions
+        function feedPet() {
+            if (gameState.petStats.hunger >= 95) {
+                showNotification('Your pet is already full!', 'info');
+                return;
             }
             
-            loadGame() {
-                const saved = localStorage.getItem('virtualPetSave');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    Object.assign(this.stats, data.stats);
-                    Object.assign(this.pet, data.pet);
-                    Object.assign(this.player, data.player);
-                    Object.assign(this.gameState, data.gameState);
-                    if (data.achievements) {
-                        this.achievements = data.achievements;
-                    }
-                }
+            gameState.petStats.hunger = Math.min(100, gameState.petStats.hunger + 25);
+            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 5);
+            addExperience(10);
+            spendCoins(5);
+            
+            animatePet('happy');
+            showFloatingText('❤️');
+            showNotification('Your pet enjoyed the meal!', 'success');
+            updateDisplay();
+            saveGameState();
+        }
+        
+        function cleanPet() {
+            if (gameState.petStats.cleanliness >= 95) {
+                showNotification('Your pet is already clean!', 'info');
+                return;
             }
             
-            saveGame() {
-                const saveData = {
-                    stats: this.stats,
-                    pet: this.pet,
-                    player: this.player,
-                    gameState: this.gameState,
-                    achievements: this.achievements
-                };
-                localStorage.setItem('virtualPetSave', JSON.stringify(saveData));
-                this.showNotification('Game saved!', 'success');
+            gameState.petStats.cleanliness = Math.min(100, gameState.petStats.cleanliness + 30);
+            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 10);
+            addExperience(8);
+            
+            animatePet('happy');
+            showFloatingText('✨');
+            showNotification('Your pet feels fresh and clean!', 'success');
+            updateDisplay();
+            saveGameState();
+        }
+        
+        function playWithPet() {
+            if (gameState.petStats.energy < 20) {
+                showNotification('Your pet is too tired to play!', 'warning');
+                return;
             }
             
-            bindEvents() {
-                document.getElementById('feedBtn').addEventListener('click', () => this.feed());
-                document.getElementById('playBtn').addEventListener('click', () => this.startMiniGame());
-                document.getElementById('cleanBtn').addEventListener('click', () => this.clean());
-                document.getElementById('sleepBtn').addEventListener('click', () => this.sleep());
-                document.getElementById('saveBtn').addEventListener('click', () => this.saveGame());
-                document.getElementById('petColor').addEventListener('change', (e) => this.changePetColor(e.target.value));
-                document.getElementById('petNameInput').addEventListener('change', (e) => this.changePetName(e.target.value));
-                document.getElementById('closeGame').addEventListener('click', () => this.closeMiniGame());
+            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 20);
+            gameState.petStats.energy = Math.max(0, gameState.petStats.energy - 15);
+            gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 5);
+            addExperience(15);
+            
+            animatePet('happy');
+            showFloatingText('🎉');
+            showNotification('Your pet had a great time playing!', 'success');
+            updateDisplay();
+            saveGameState();
+        }
+        
+        function putPetToSleep() {
+            if (gameState.petStats.energy >= 95) {
+                showNotification('Your pet is not tired!', 'info');
+                return;
             }
             
-            startGameLoop() {
-                setInterval(() => {
-                    if (!this.gameState.isSleeping) {
-                        this.degradeStats();
-                        this.ageUp();
-                    }
-                    this.updateDisplay();
-                    this.checkAchievements();
-                }, 5000); // Update every 5 seconds
-            }
+            gameState.petStats.energy = Math.min(100, gameState.petStats.energy + 40);
+            gameState.petStats.health = Math.min(100, gameState.petStats.health + 10);
+            addExperience(5);
             
-            degradeStats() {
-                this.stats.hunger = Math.max(0, this.stats.hunger - 2);
-                this.stats.happiness = Math.max(0, this.stats.happiness - 1);
-                this.stats.cleanliness = Math.max(0, this.stats.cleanliness - 1);
-                if (!this.gameState.isSleeping) {
-                    this.stats.energy = Math.max(0, this.stats.energy - 1);
-                }
-            }
+            animatePet('sleep');
+            showFloatingText('💤');
+            showNotification('Your pet had a restful sleep!', 'success');
+            updateDisplay();
+            saveGameState();
+        }
+        
+        function petPet() {
+            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 3);
+            addExperience(2);
             
-            ageUp() {
-                const timePassed = Date.now() - this.gameState.lastUpdate;
-                if (timePassed > 60000) { // Age up every minute
-                    this.pet.age++;
-                    this.gameState.lastUpdate = Date.now();
-                    
-                    if (this.pet.age % 10 === 0) {
-                        this.levelUp();
-                    }
-                }
-            }
+            animatePet('happy');
+            showFloatingText('❤️');
+            updateDisplay();
+        }
+        
+        // Pet Animation
+        function animatePet(type) {
+            const petSprite = document.getElementById('petSprite');
+            petSprite.classList.remove('happy');
             
-            levelUp() {
-                this.pet.level++;
-                this.showNotification(`Level up! ${this.pet.name} is now level ${this.pet.level}!`, 'success');
-                this.showHearts();
-                this.player.coins += 20;
-            }
-            
-            feed() {
-                if (this.player.coins >= 5) {
-                    this.player.coins -= 5;
-                    this.stats.hunger = Math.min(100, this.stats.hunger + 25);
-                    this.stats.happiness = Math.min(100, this.stats.happiness + 5);
-                    this.pet.experience += 10;
-                    this.showNotification(`${this.pet.name} enjoyed the meal!`, 'success');
-                    this.showHearts();
-                    this.petAnimation('happy');
-                } else {
-                    this.showNotification('Not enough coins!', 'error');
-                }
-            }
-            
-            clean() {
-                if (this.player.coins >= 3) {
-                    this.player.coins -= 3;
-                    this.stats.cleanliness = 100;
-                    this.stats.happiness = Math.min(100, this.stats.happiness + 10);
-                    this.pet.experience += 5;
-                    this.gameState.cleanStreak++;
-                    this.showNotification(`${this.pet.name} is sparkling clean!`, 'success');
-                    this.petAnimation('happy');
-                } else {
-                    this.showNotification('Not enough coins!', 'error');
-                }
-            }
-            
-            sleep() {
-                this.gameState.isSleeping = !this.gameState.isSleeping;
-                if (this.gameState.isSleeping) {
-                    this.gameState.sleepCount++;
-                    this.showNotification(`${this.pet.name} is taking a nap...`, 'info');
-                    this.petAnimation('sleeping');
-                    
-                    // Restore energy while sleeping
-                    const sleepInterval = setInterval(() => {
-                        if (this.gameState.isSleeping) {
-                            this.stats.energy = Math.min(100, this.stats.energy + 5);
-                            this.updateDisplay();
-                            
-                            if (this.stats.energy >= 100) {
-                                this.gameState.isSleeping = false;
-                                this.showNotification(`${this.pet.name} woke up refreshed!`, 'success');
-                                this.petAnimation('happy');
-                                clearInterval(sleepInterval);
-                            }
-                        } else {
-                            clearInterval(sleepInterval);
-                        }
-                    }, 2000);
-                } else {
-                    this.showNotification(`${this.pet.name} woke up!`, 'info');
-                    this.petAnimation('normal');
-                }
-            }
-            
-            startMiniGame() {
-                const miniGame = document.getElementById('miniGame');
-                const gameArea = document.getElementById('gameArea');
-                const scoreElement = document.getElementById('gameScore');
-                const timeElement = document.getElementById('gameTime');
-                
-                let score = 0;
-                let timeLeft = 10;
-                let gameInterval;
-                let spawnInterval;
-                
-                miniGame.classList.add('active');
-                scoreElement.textContent = score;
-                timeElement.textContent = timeLeft;
-                
-                // Game timer
-                gameInterval = setInterval(() => {
-                    timeLeft--;
-                    timeElement.textContent = timeLeft;
-                    
-                    if (timeLeft <= 0) {
-                        this.endMiniGame(score, gameInterval, spawnInterval);
-                    }
-                }, 1000);
-                
-                // Spawn targets
-                spawnInterval = setInterval(() => {
-                    this.spawnTarget(gameArea, scoreElement, () => score++);
-                }, 1500);
-            }
-            
-            spawnTarget(gameArea, scoreElement, onHit) {
-                const target = document.createElement('div');
-                target.className = 'click-target absolute';
-                target.style.left = Math.random() * (300 - 60) + 'px';
-                target.style.top = Math.random() * (200 - 60) + 'px';
-                
-                target.addEventListener('click', () => {
-                    onHit();
-                    scoreElement.textContent = parseInt(scoreElement.textContent) + 1;
-                    gameArea.removeChild(target);
-                    this.showHearts();
-                });
-                
-                gameArea.appendChild(target);
-                
-                // Remove target after 3 seconds if not clicked
-                setTimeout(() => {
-                    if (gameArea.contains(target)) {
-                        gameArea.removeChild(target);
-                    }
-                }, 3000);
-            }
-            
-            endMiniGame(score, gameInterval, spawnInterval) {
-                clearInterval(gameInterval);
-                clearInterval(spawnInterval);
-                
-                const coinsEarned = score * 2;
-                this.player.coins += coinsEarned;
-                this.stats.happiness = Math.min(100, this.stats.happiness + score);
-                this.pet.experience += score * 2;
-                
-                this.showNotification(`Game over! Score: ${score}, Earned: ${coinsEarned} coins`, 'success');
-                this.closeMiniGame();
-            }
-            
-            closeMiniGame() {
-                const miniGame = document.getElementById('miniGame');
-                const gameArea = document.getElementById('gameArea');
-                miniGame.classList.remove('active');
-                gameArea.innerHTML = '';
-            }
-            
-            changePetColor(color) {
-                document.getElementById('pet').style.background = color;
-            }
-            
-            changePetName(name) {
-                if (name.trim()) {
-                    this.pet.name = name.trim();
-                    document.getElementById('petName').textContent = this.pet.name;
-                }
-            }
-            
-            petAnimation(type) {
-                const pet = document.getElementById('pet');
-                pet.className = `pet ${type}`;
-                
-                setTimeout(() => {
-                    pet.className = 'pet';
-                }, 1000);
-            }
-            
-            showHearts() {
-                const container = document.getElementById('floatingHearts');
-                const heart = document.createElement('div');
-                heart.className = 'heart';
-                heart.innerHTML = '❤️';
-                container.appendChild(heart);
-                
-                setTimeout(() => {
-                    container.removeChild(heart);
-                }, 1000);
-            }
-            
-            showNotification(message, type) {
-                const container = document.getElementById('notifications');
-                const notification = document.createElement('div');
-                notification.className = `notification px-6 py-3 rounded-lg shadow-lg text-white mb-2 ${
-                    type === 'success' ? 'bg-green-500' : 
-                    type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-                }`;
-                notification.textContent = message;
-                
-                container.appendChild(notification);
-                
-                setTimeout(() => {
-                    container.removeChild(notification);
-                }, 3000);
-            }
-            
-            updateDisplay() {
-                // Update status bars
-                this.updateStatusBar('hunger', this.stats.hunger);
-                this.updateStatusBar('happiness', this.stats.happiness);
-                this.updateStatusBar('cleanliness', this.stats.cleanliness);
-                this.updateStatusBar('energy', this.stats.energy);
-                
-                // Update pet info
-                document.getElementById('petName').textContent = this.pet.name;
-                document.getElementById('petLevel').textContent = this.pet.level;
-                document.getElementById('petAge').textContent = this.pet.age;
-                document.getElementById('coins').textContent = this.player.coins;
-                
-                // Update pet appearance based on stats
-                const pet = document.getElementById('pet');
-                pet.classList.remove('hungry', 'dirty', 'sleeping');
-                
-                if (this.stats.hunger < 30) pet.classList.add('hungry');
-                if (this.stats.cleanliness < 50) pet.classList.add('dirty');
-                if (this.gameState.isSleeping) pet.classList.add('sleeping');
-            }
-            
-            updateStatusBar(stat, value) {
-                const bar = document.getElementById(`${stat}Bar`);
-                const text = document.getElementById(`${stat}Text`);
-                bar.style.width = `${value}%`;
-                text.textContent = `${value}/100`;
-                
-                // Color coding
-                if (value > 70) bar.className = `status-bar h-3 rounded-full bg-green-500`;
-                else if (value > 30) bar.className = `status-bar h-3 rounded-full bg-yellow-500`;
-                else bar.className = `status-bar h-3 rounded-full bg-red-500`;
-            }
-            
-            checkAchievements() {
-                const playTime = Date.now() - this.gameState.startTime;
-                
-                this.unlockAchievement('first_feed', this.pet.experience > 0);
-                this.unlockAchievement('clean_master', this.gameState.cleanStreak >= 5);
-                this.unlockAchievement('happy_pet', this.stats.happiness >= 100);
-                this.unlockAchievement('level_up', this.pet.level >= 2);
-                this.unlockAchievement('rich_player', this.player.coins >= 100);
-                this.unlockAchievement('night_owl', this.gameState.sleepCount >= 3);
-                this.unlockAchievement('pet_care', playTime > 300000); // 5 minutes
-            }
-            
-            unlockAchievement(id, condition) {
-                const achievement = this.achievements.find(a => a.id === id);
-                if (achievement && !achievement.unlocked && condition) {
-                    achievement.unlocked = true;
-                    this.showAchievement(achievement);
-                    this.renderAchievements();
-                    this.player.coins += 10;
-                }
-            }
-            
-            showAchievement(achievement) {
-                const achievementDiv = document.createElement('div');
-                achievementDiv.className = 'achievement';
-                achievementDiv.innerHTML = `
-                    <div class="font-bold">🏆 Achievement Unlocked!</div>
-                    <div>${achievement.name}</div>
-                    <div class="text-sm">${achievement.desc}</div>
-                `;
-                
-                document.body.appendChild(achievementDiv);
-                
-                setTimeout(() => {
-                    document.body.removeChild(achievementDiv);
-                }, 3000);
-            }
-            
-            renderAchievements() {
-                const container = document.getElementById('achievements');
-                container.innerHTML = '';
-                
-                this.achievements.forEach(achievement => {
-                    const div = document.createElement('div');
-                    div.className = `p-3 rounded-lg text-center ${
-                        achievement.unlocked ? 'bg-yellow-100 border-2 border-yellow-400' : 'bg-gray-200'
-                    }`;
-                    div.innerHTML = `
-                        <div class="text-2xl mb-1">${achievement.unlocked ? '🏆' : '🔒'}</div>
-                        <div class="font-semibold text-sm">${achievement.name}</div>
-                        <div class="text-xs text-gray-600">${achievement.desc}</div>
-                    `;
-                    container.appendChild(div);
-                });
+            if (type === 'happy') {
+                petSprite.classList.add('happy');
+                setTimeout(() => petSprite.classList.remove('happy'), 600);
             }
         }
         
-        // Start the game when page loads
-        window.addEventListener('load', () => {
-            new VirtualPet();
+        function showFloatingText(emoji) {
+            const petContainer = document.querySelector('.pet-container');
+            const floatingText = document.createElement('div');
+            floatingText.className = 'floating-hearts';
+            floatingText.textContent = emoji;
+            floatingText.style.left = Math.random() * 200 + 100 + 'px';
+            floatingText.style.top = '150px';
+            
+            petContainer.appendChild(floatingText);
+            
+            setTimeout(() => {
+                if (petContainer.contains(floatingText)) {
+                    petContainer.removeChild(floatingText);
+                }
+            }, 2000);
+        }
+        
+        // Display Updates
+        function updateDisplay() {
+            updateStatusBars();
+            updatePetDisplay();
+            updateUI();
+            updateMood();
+            checkEvolution();
+            checkAchievements();
+        }
+        
+        function updateStatusBars() {
+            const stats = ['health', 'hunger', 'happiness', 'cleanliness', 'energy', 'intelligence'];
+            
+            stats.forEach(stat => {
+                const value = gameState.petStats[stat];
+                const bar = document.getElementById(stat + 'Bar');
+                const text = document.getElementById(stat + 'Text');
+                
+                if (bar && text) {
+                    bar.style.width = value + '%';
+                    text.textContent = Math.round(value) + '%';
+                }
+            });
+            
+            updateStatsChart();
+        }
+        
+        function updatePetDisplay() {
+            if (!gameState.selectedPet) return;
+            
+            const petSprite = document.getElementById('petSprite');
+            const petName = document.getElementById('petName');
+            const petType = document.getElementById('petType');
+            const petAge = document.getElementById('petAge');
+            const petWeight = document.getElementById('petWeight');
+            const petColor = document.getElementById('petColor');
+            const evolutionStage = document.getElementById('evolutionStage');
+            const evolutionProgress = document.getElementById('evolutionProgress');
+            
+            if (petSprite) petSprite.textContent = petTypes[gameState.selectedPet].emoji;
+            if (petName) petName.textContent = gameState.petInfo.name;
+            if (petType) petType.textContent = capitalizeFirst(gameState.petInfo.type);
+            if (petAge) petAge.textContent = gameState.petInfo.age + ' days';
+            if (petWeight) petWeight.textContent = gameState.petInfo.weight.toFixed(1) + ' kg';
+            if (petColor) petColor.textContent = capitalizeFirst(gameState.petInfo.color);
+            if (evolutionStage) evolutionStage.textContent = capitalizeFirst(gameState.petInfo.evolutionStage);
+            if (evolutionProgress) evolutionProgress.style.width = gameState.petInfo.evolutionProgress + '%';
+        }
+        
+        function updateUI() {
+            document.getElementById('coins').textContent = gameState.gameData.coins;
+            document.getElementById('level').textContent = gameState.gameData.level;
+            document.getElementById('experience').textContent = gameState.gameData.experience + '/100';
+        }
+        
+        function updateMood() {
+            const petMood = document.getElementById('petMood');
+            const avgMood = (gameState.petStats.happiness + gameState.petStats.health + gameState.petStats.energy) / 3;
+            
+            let mood = 'Neutral';
+            if (avgMood >= 80) mood = 'Very Happy';
+            else if (avgMood >= 60) mood = 'Happy';
+            else if (avgMood >= 40) mood = 'Okay';
+            else if (avgMood >= 20) mood = 'Sad';
+            else mood = 'Very Sad';
+            
+            if (petMood) petMood.textContent = 'Feeling ' + mood;
+        }
+        
+        // Stats Chart
+        function initializeStatsChart() {
+            const ctx = document.getElementById('statsChart').getContext('2d');
+            
+            window.statsChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Health', 'Hunger', 'Happiness', 'Cleanliness', 'Energy', 'Intelligence'],
+                    datasets: [{
+                        label: 'Pet Stats',
+                        data: [
+                            gameState.petStats.health,
+                            gameState.petStats.hunger,
+                            gameState.petStats.happiness,
+                            gameState.petStats.cleanliness,
+                            gameState.petStats.energy,
+                            gameState.petStats.intelligence
+                        ],
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(102, 126, 234, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateStatsChart() {
+            if (window.statsChart) {
+                window.statsChart.data.datasets[0].data = [
+                    gameState.petStats.health,
+                    gameState.petStats.hunger,
+                    gameState.petStats.happiness,
+                    gameState.petStats.cleanliness,
+                    gameState.petStats.energy,
+                    gameState.petStats.intelligence
+                ];
+                window.statsChart.update();
+            }
+        }
+        
+        // Shop System
+        function openShop() {
+            document.getElementById('shopModal').classList.remove('hidden');
+        }
+        
+        function buyItem(itemId, cost) {
+            if (gameState.gameData.coins < cost) {
+                showNotification('Not enough coins!', 'warning');
+                return;
+            }
+            
+            gameState.gameData.coins -= cost;
+            gameState.gameData.inventory.push(itemId);
+            
+            // Apply item effects
+            switch(itemId) {
+                case 'premium_food':
+                    gameState.petStats.hunger = Math.min(100, gameState.petStats.hunger + 30);
+                    break;
+                case 'toy_bear':
+                    gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 20);
+                    break;
+                case 'health_potion':
+                    gameState.petStats.health = Math.min(100, gameState.petStats.health + 50);
+                    break;
+                case 'training_book':
+                    gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 25);
+                    break;
+                case 'bow_tie':
+                    gameState.petInfo.accessories.push('bow_tie');
+                    break;
+                case 'luxury_home':
+                    gameState.petInfo.environment = 'luxury';
+                    changeEnvironment('luxury');
+                    break;
+            }
+            
+            addExperience(5);
+            updateDisplay();
+            saveGameState();
+            showNotification('Item purchased successfully!', 'success');
+        }
+        
+        // Customization
+        function openCustomization() {
+            document.getElementById('customizationModal').classList.remove('hidden');
+            document.getElementById('customPetName').value = gameState.petInfo.name;
+        }
+        
+        function saveCustomization() {
+            const newName = document.getElementById('customPetName').value.trim();
+            if (newName) {
+                gameState.petInfo.name = newName;
+                updateDisplay();
+                saveGameState();
+                showNotification('Pet customized successfully!', 'success');
+                closeModal('customizationModal');
+            }
+        }
+        
+        function changePetColor(color) {
+            gameState.petInfo.color = color;
+            updateDisplay();
+        }
+        
+        function changeEnvironment(env) {
+            gameState.petInfo.environment = env;
+            const envBg = document.getElementById('environmentBg');
+            
+            const environments = {
+                park: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                beach: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                garden: 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)',
+                space: 'linear-gradient(135deg, #2c3e50 0%, #3498db 100%)',
+                luxury: 'linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%)'
+            };
+            
+            if (envBg) {
+                envBg.style.background = environments[env] || environments.park;
+            }
+        }
+        
+        function toggleAccessory(accessory) {
+            const index = gameState.petInfo.accessories.indexOf(accessory);
+            if (index > -1) {
+                gameState.petInfo.accessories.splice(index, 1);
+            } else {
+                gameState.petInfo.accessories.push(accessory);
+            }
+        }
+        
+        // Achievements
+        function openAchievements() {
+            document.getElementById('achievementsModal').classList.remove('hidden');
+            displayAchievements();
+        }
+        
+        function displayAchievements() {
+            const achievementsList = document.getElementById('achievementsList');
+            achievementsList.innerHTML = '';
+            
+            Object.keys(achievements).forEach(key => {
+                const achievement = achievements[key];
+                const isUnlocked = gameState.gameData.achievements.includes(key);
+                
+                const achievementDiv = document.createElement('div');
+                achievementDiv.className = `achievement ${isUnlocked ? '' : 'opacity-50'}`;
+                achievementDiv.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="text-2xl mr-3">${achievement.icon}</div>
+                        <div>
+                            <h4 class="font-bold">${achievement.name}</h4>
+                            <p class="text-sm">${achievement.description}</p>
+                            ${isUnlocked ? '<span class="text-green-600 text-sm">✅ Unlocked</span>' : '<span class="text-gray-500 text-sm">🔒 Locked</span>'}
+                        </div>
+                    </div>
+                `;
+                achievementsList.appendChild(achievementDiv);
+            });
+        }
+        
+        function unlockAchievement(achievementId) {
+            if (!gameState.gameData.achievements.includes(achievementId)) {
+                gameState.gameData.achievements.push(achievementId);
+                const achievement = achievements[achievementId];
+                showNotification(`Achievement Unlocked: ${achievement.name}!`, 'success');
+                earnCoins(50);
+                saveGameState();
+            }
+        }
+        
+        function checkAchievements() {
+            // Check various achievement conditions
+            if (gameState.petStats.happiness >= 90 && !gameState.gameData.achievements.includes('happy_pet')) {
+                unlockAchievement('happy_pet');
+            }
+            
+            if (gameState.petStats.health === 100 && !gameState.gameData.achievements.includes('healthy_pet')) {
+                unlockAchievement('healthy_pet');
+            }
+            
+            if (gameState.petStats.intelligence === 100 && !gameState.gameData.achievements.includes('smart_pet')) {
+                unlockAchievement('smart_pet');
+            }
+            
+            if (gameState.gameData.coins >= 1000 && !gameState.gameData.achievements.includes('wealthy_owner')) {
+                unlockAchievement('wealthy_owner');
+            }
+            
+            if (gameState.petInfo.evolutionStage === 'adult' && !gameState.gameData.achievements.includes('pet_evolution')) {
+                unlockAchievement('pet_evolution');
+            }
+        }
+        
+        // Evolution System
+        function checkEvolution() {
+            const currentStage = gameState.petInfo.evolutionStage;
+            let newStage = currentStage;
+            
+            if (gameState.petInfo.age >= 30 && currentStage === 'baby') {
+                newStage = 'child';
+                gameState.petInfo.evolutionProgress = 0;
+            } else if (gameState.petInfo.age >= 60 && currentStage === 'child') {
+                newStage = 'teen';
+                gameState.petInfo.evolutionProgress = 0;
+            } else if (gameState.petInfo.age >= 100 && currentStage === 'teen') {
+                newStage = 'adult';
+                gameState.petInfo.evolutionProgress = 100;
+            }
+            
+            if (newStage !== currentStage) {
+                gameState.petInfo.evolutionStage = newStage;
+                showNotification(`Your pet evolved to ${newStage} stage!`, 'success');
+                earnCoins(100);
+                addExperience(50);
+            } else {
+                // Update evolution progress
+                const progressPerDay = 100 / 30; // 30 days per stage
+                gameState.petInfo.evolutionProgress = Math.min(100, (gameState.petInfo.age % 30) * progressPerDay);
+            }
+        }
+        
+        // Mini Games
+        function startMemoryGame() {
+            document.getElementById('memoryGameModal').classList.remove('hidden');
+            initializeMemoryGame();
+        }
+        
+        function initializeMemoryGame() {
+            const gameGrid = document.getElementById('memoryGameGrid');
+            const emojis = ['🐱', '🐕', '🐦', '🐠', '🐹', '🐰', '🦊', '🐸'];
+            const gameCards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+            
+            gameGrid.innerHTML = '';
+            gameState.memoryGame = {
+                score: 0,
+                moves: 0,
+                flippedCards: [],
+                matchedPairs: 0
+            };
+            
+            gameCards.forEach((emoji, index) => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.dataset.emoji = emoji;
+                card.dataset.index = index;
+                card.textContent = '?';
+                card.onclick = () => flipMemoryCard(card);
+                gameGrid.appendChild(card);
+            });
+            
+            updateMemoryGameUI();
+        }
+        
+        function flipMemoryCard(card) {
+            if (card.classList.contains('matched') || gameState.memoryGame.flippedCards.length >= 2) {
+                return;
+            }
+            
+            card.textContent = card.dataset.emoji;
+            card.style.background = '#4ecdc4';
+            gameState.memoryGame.flippedCards.push(card);
+            
+            if (gameState.memoryGame.flippedCards.length === 2) {
+                gameState.memoryGame.moves++;
+                updateMemoryGameUI();
+                
+                setTimeout(() => {
+                    checkMemoryMatch();
+                }, 1000);
+            }
+        }
+        
+        function checkMemoryMatch() {
+            const [card1, card2] = gameState.memoryGame.flippedCards;
+            
+            if (card1.dataset.emoji === card2.dataset.emoji) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                gameState.memoryGame.score += 10;
+                gameState.memoryGame.matchedPairs++;
+                
+                if (gameState.memoryGame.matchedPairs === 8) {
+                    showNotification('Congratulations! You won the memory game!', 'success');
+                    earnCoins(50);
+                    addExperience(25);
+                    gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 10);
+                    updateDisplay();
+                }
+            } else {
+                card1.textContent = '?';
+                card2.textContent = '?';
+                card1.style.background = '#f8f9fa';
+                card2.style.background = '#f8f9fa';
+            }
+            
+            gameState.memoryGame.flippedCards = [];
+            updateMemoryGameUI();
+        }
+        
+        function updateMemoryGameUI() {
+            document.getElementById('memoryScore').textContent = gameState.memoryGame.score;
+            document.getElementById('memoryMoves').textContent = gameState.memoryGame.moves;
+        }
+        
+        function resetMemoryGame() {
+            initializeMemoryGame();
+        }
+        
+        // Catch Game
+        function startCatchGame() {
+            document.getElementById('catchGameModal').classList.remove('hidden');
+            initializeCatchGame();
+        }
+        
+        function initializeCatchGame() {
+            gameState.catchGame = {
+                score: 0,
+                lives: 3,
+                isPlaying: false,
+                catcherPosition: 50,
+                fallingItems: []
+            };
+            updateCatchGameUI();
+        }
+        
+        function startCatchGameplay() {
+            if (gameState.catchGame.isPlaying) return;
+            
+            gameState.catchGame.isPlaying = true;
+            document.getElementById('startCatchBtn').textContent = 'Playing...';
+            document.getElementById('startCatchBtn').disabled = true;
+            
+            // Start spawning falling items
+            gameState.catchGame.spawnInterval = setInterval(spawnFallingItem, 1500);
+            
+            // Game duration: 30 seconds
+            setTimeout(() => {
+                endCatchGame();
+            }, 30000);
+            
+            // Set up catcher movement
+            setupCatcherControls();
+        }
+        
+        function setupCatcherControls() {
+            const gameArea = document.getElementById('catchGameArea');
+            const catcher = document.getElementById('catcher');
+            
+            gameArea.addEventListener('mousemove', (e) => {
+                if (!gameState.catchGame.isPlaying) return;
+                
+                const rect = gameArea.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percentage = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                
+                gameState.catchGame.catcherPosition = percentage;
+                catcher.style.left = percentage + '%';
+            });
+        }
+        
+        function spawnFallingItem() {
+            const gameArea = document.getElementById('catchGameArea');
+            const item = document.createElement('div');
+            const treats = ['🦴', '🐟', '🥕', '🧀'];
+            
+            item.textContent = treats[Math.floor(Math.random() * treats.length)];
+            item.style.position = 'absolute';
+            item.style.fontSize = '24px';
+            item.style.left = Math.random() * 90 + '%';
+            item.style.top = '0px';
+            item.style.transition = 'top 3s linear';
+            
+            gameArea.appendChild(item);
+            
+            // Animate falling
+            setTimeout(() => {
+                item.style.top = '370px';
+            }, 10);
+            
+            // Check for catch or miss
+            setTimeout(() => {
+                checkCatch(item);
+            }, 3000);
+        }
+        
+        function checkCatch(item) {
+            const itemRect = item.getBoundingClientRect();
+            const catcherRect = document.getElementById('catcher').getBoundingClientRect();
+            
+            const caught = itemRect.left < catcherRect.right && 
+                          itemRect.right > catcherRect.left && 
+                          itemRect.bottom > catcherRect.top;
+            
+            if (caught) {
+                gameState.catchGame.score += 10;
+                showNotification('Caught!', 'success');
+            } else {
+                gameState.catchGame.lives--;
+                if (gameState.catchGame.lives <= 0) {
+                    endCatchGame();
+                }
+            }
+            
+            if (item.parentNode) {
+                item.parentNode.removeChild(item);
+            }
+            
+            updateCatchGameUI();
+        }
+        
+        function endCatchGame() {
+            gameState.catchGame.isPlaying = false;
+            clearInterval(gameState.catchGame.spawnInterval);
+            
+            document.getElementById('startCatchBtn').textContent = 'Start Game';
+            document.getElementById('startCatchBtn').disabled = false;
+            
+            // Clear remaining items
+            const gameArea = document.getElementById('catchGameArea');
+            const items = gameArea.querySelectorAll('div:not(#catcher)');
+            items.forEach(item => item.remove());
+            
+            // Reward player
+            const reward = gameState.catchGame.score;
+            earnCoins(reward);
+            addExperience(reward);
+            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 15);
+            
+            showNotification(`Game over! You earned ${reward} coins!`, 'success');
+            updateDisplay();
+        }
+        
+        function updateCatchGameUI() {
+            document.getElementById('catchScore').textContent = gameState.catchGame.score;
+            document.getElementById('catchLives').textContent = gameState.catchGame.lives;
+        }
+        
+        function resetCatchGame() {
+            if (gameState.catchGame.isPlaying) {
+                endCatchGame();
+            }
+            initializeCatchGame();
+        }
+        
+        // Puzzle Game (simplified version)
+        function startPuzzleGame() {
+            const puzzles = [
+                "What animal says 'meow'?",
+                "What do dogs like to play with?",
+                "What do fish live in?",
+                "What do cats like to chase?"
+            ];
+            
+            const answers = ['cat', 'ball', 'water', 'mouse'];
+            const randomIndex = Math.floor(Math.random() * puzzles.length);
+            
+            const userAnswer = prompt(puzzles[randomIndex]);
+            
+            if (userAnswer && userAnswer.toLowerCase().includes(answers[randomIndex])) {
+                showNotification('Correct! Your pet learned something new!', 'success');
+                gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 15);
+                gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 10);
+                earnCoins(30);
+                addExperience(20);
+            } else {
+                showNotification('Not quite right, but your pet had fun trying!', 'info');
+                gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 5);
+                earnCoins(10);
+                addExperience(5);
+            }
+            
+            updateDisplay();
+        }
+        
+        // Vet and Training
+        function visitVet() {
+            if (gameState.gameData.coins < 30) {
+                showNotification('Vet visit costs 30 coins!', 'warning');
+                return;
+            }
+            
+            spendCoins(30);
+            gameState.petStats.health = 100;
+            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 15);
+            addExperience(20);
+            
+            showNotification('Your pet got a thorough health checkup!', 'success');
+            updateDisplay();
+        }
+        
+        function trainPet() {
+            if (gameState.petStats.energy < 30) {
+                showNotification('Your pet is too tired to train!', 'warning');
+                return;
+            }
+            
+            if (gameState.gameData.coins < 20) {
+                showNotification('Training costs 20 coins!', 'warning');
+                return;
+            }
+            
+            spendCoins(20);
+            gameState.petStats.energy = Math.max(0, gameState.petStats.energy - 25);
+            gameState.petStats.intelligence = Math.min(100, gameState.petStats.intelligence + 20);
+            gameState.petStats.happiness = Math.min(100, gameState.petStats.happiness + 10);
+            addExperience(25);
+            
+            showNotification('Training session completed! Your pet is smarter!', 'success');
+            updateDisplay();
+        }
+        
+        // Game Loop and Time Management
+        function startGameLoop() {
+            setInterval(() => {
+                if (gameState.selectedPet) {
+                    updatePetNeeds();
+                    ageUp();
+                    updateWeather();
+                    saveGameState();
+                }
+            }, 10000); // Update every 10 seconds
+        }
+        
+        function updatePetNeeds() {
+            // Gradual decrease of stats over time (realistic pet care)
+            const petType = petTypes[gameState.selectedPet];
+            if (petType) {
+                gameState.petStats.hunger = Math.max(0, gameState.petStats.hunger + (petType.baseStats.hunger || -1));
+                gameState.petStats.happiness = Math.max(0, gameState.petStats.happiness + (petType.baseStats.happiness || -0.5));
+                gameState.petStats.energy = Math.max(0, gameState.petStats.energy + (petType.baseStats.energy || -0.5));
+                gameState.petStats.cleanliness = Math.max(0, gameState.petStats.cleanliness - 0.3);
+                
+                // Health is affected by other stats
+                const avgCare = (gameState.petStats.hunger + gameState.petStats.happiness + gameState.petStats.cleanliness) / 3;
+                if (avgCare < 30) {
+                    gameState.petStats.health = Math.max(0, gameState.petStats.health - 1);
+                } else if (avgCare > 80) {
+                    gameState.petStats.health = Math.min(100, gameState.petStats.health + 0.5);
+                }
+            }
+            
+            updateDisplay();
+        }
+        
+        function ageUp() {
+            gameState.petInfo.age += 0.1; // Age in game hours
+            gameState.petInfo.weight += 0.001; // Weight gain
+            gameState.gameData.totalPlayTime += 10; // seconds
+        }
+        
+        // Weather and Day/Night System
+        function initializeWeather() {
+            gameState.gameSettings.weather = weatherPatterns[Math.floor(Math.random() * weatherPatterns.length)];
+            updateWeatherDisplay();
+        }
+        
+        function updateWeather() {
+            if (Math.random() < 0.1) { // 10% chance to change weather
+                gameState.gameSettings.weather = weatherPatterns[Math.floor(Math.random() * weatherPatterns.length)];
+                updateWeatherDisplay();
+            }
+        }
+        
+        function updateWeatherDisplay() {
+            const weatherWidget = document.getElementById('weatherWidget');
+            const icon = weatherIcons[gameState.gameSettings.weather];
+            const name = gameState.gameSettings.weather.charAt(0).toUpperCase() + gameState.gameSettings.weather.slice(1);
+            
+            if (weatherWidget) {
+                weatherWidget.innerHTML = `<span class="text-2xl">${icon}</span><span class="ml-2">${name}</span>`;
+            }
+        }
+        
+        function initializeDayNightCycle() {
+            setInterval(() => {
+                gameState.gameSettings.isDay = !gameState.gameSettings.isDay;
+                const cycle = document.getElementById('dayNightCycle');
+                cycle.className = `day-night-cycle ${gameState.gameSettings.isDay ? 'day' : 'night'}`;
+            }, 60000); // Change every minute for demo purposes
+        }
+        
+        // Utility Functions
+        function addExperience(amount) {
+            gameState.gameData.experience += amount;
+            if (gameState.gameData.experience >= 100) {
+                gameState.gameData.level++;
+                gameState.gameData.experience = 0;
+                earnCoins(gameState.gameData.level * 10);
+                showNotification(`Level up! You are now level ${gameState.gameData.level}!`, 'success');
+            }
+        }
+        
+        function earnCoins(amount) {
+            gameState.gameData.coins += amount;
+        }
+        
+        function spendCoins(amount) {
+            gameState.gameData.coins = Math.max(0, gameState.gameData.coins - amount);
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification bg-${type === 'success' ? 'green' : type === 'warning' ? 'yellow' : type === 'error' ? 'red' : 'blue'}-500`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
+        }
+        
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        // Modal Management
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+        
+        // Save/Load Game State
+        function saveGameState() {
+            localStorage.setItem('virtualPetGame', JSON.stringify(gameState));
+        }
+        
+        function loadGameState() {
+            const saved = localStorage.getItem('virtualPetGame');
+            if (saved) {
+                try {
+                    const loadedState = JSON.parse(saved);
+                    gameState = { ...gameState, ...loadedState };
+                    
+                    if (gameState.selectedPet) {
+                        document.getElementById('petSelectionScreen').classList.add('hidden');
+                        document.getElementById('gameScreen').classList.remove('hidden');
+                        updateDisplay();
+                        setTimeout(() => {
+                            initializeStatsChart();
+                        }, 100);
+                    }
+                } catch (e) {
+                    console.log('Could not load saved game');
+                }
+            }
+        }
+        
+        // Click outside modal to close
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.add('hidden');
+            }
         });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.classList.add('hidden');
+                });
+            }
+        });
+        
+        // Welcome message
+        setTimeout(() => {
+            showNotification('Welcome to Virtual Pet Paradise! Choose your pet to start your journey!', 'success');
+        }, 1000);
     </script>
 </body>
 </html>
