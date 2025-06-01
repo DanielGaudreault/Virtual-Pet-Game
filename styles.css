@@ -1,0 +1,265 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #6b7280, #d1d5db);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    max-width: 800px;
+    margin: 20px;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.day-night-cycle {
+    position: relative;
+    padding: 20px;
+    border-radius: 10px;
+    transition: background 1s ease;
+}
+
+.day-night-cycle.day {
+    background: linear-gradient(135deg, #87ceeb, #e0f6ff);
+}
+
+.day-night-cycle.night {
+    background: linear-gradient(135deg, #2c3e50, #4b6cb7);
+}
+
+.weather-display {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.weather-effect.rain::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://media.giphy.com/media/xT9IgzoV1l6mI3b0y4/giphy.gif') center/cover;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.pet-display {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pet-avatar {
+    font-size: 100px;
+    margin: 10px 0;
+    position: relative;
+}
+
+.floating-hearts {
+    color: #ff69b4;
+    font-size: 24px;
+    animation: float 2s ease-out forwards;
+}
+
+@keyframes float {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-50px); opacity: 0; }
+}
+
+.stats-container {
+    display: grid;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 20px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+#healthBar { background: #22c55e; }
+#hungerBar { background: #eab308; }
+#happinessBar { background: #ec4899; }
+#energyBar { background: #3b82f6; }
+#cleanlinessBar { background: #10b981; }
+#experienceBar { background: #8b5cf6; }
+
+.quick-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #3b82f6;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #2563eb;
+}
+
+.navigation {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.navigation-tab {
+    background: #e5e7eb;
+    color: #333;
+}
+
+.navigation-tab.active {
+    background: #3b82f6;
+    color: white;
+}
+
+.user-stats {
+    text-align: center;
+    margin: 10px 0;
+}
+
+#notificationArea {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    max-width: 300px;
+}
+
+.notification {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    animation: slideIn 0.5s ease-out;
+}
+
+.notification.success { background: #22c55e; }
+.notification.info { background: #3b82f6; }
+.notification.error { background: #ef4444; }
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+input {
+    padding: 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+}
+
+.password-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+#petCollection, #shopItems {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.pet-card, .shop-item {
+    background: #f3f4f6;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+#houseCanvas {
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.house-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+@media (max-width: 600px) {
+    .container {
+        margin: 10px;
+        padding: 10px;
+    }
+
+    .pet-avatar {
+        font-size: 60px;
+    }
+
+    .quick-actions {
+        flex-direction: column;
+    }
+
+    .navigation {
+        flex-direction: column;
+    }
+}
