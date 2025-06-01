@@ -1,1044 +1,365 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PetVerse - The Ultimate Virtual Pet Universe</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        
-        * {
-            font-family: 'Poppins', sans-serif;
-        }
-        
-        .pet-container {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        
-        .pet-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .pet-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.5);
-        }
-        
-        .pet-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            margin: 0 auto;
-            animation: petPulse 2s infinite;
-        }
-        
-        @keyframes petPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        .status-bar {
-            height: 20px;
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .status-fill {
-            height: 100%;
-            transition: width 0.5s ease;
-            border-radius: 10px;
-        }
-        
-        .navigation-tab {
-            padding: 12px 20px;
-            margin: 4px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .navigation-tab:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-        
-        .navigation-tab.active {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-        
-        .room-tile {
-            width: 100px;
-            height: 100px;
-            border: 2px dashed #cbd5e0;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .room-tile:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-        }
-        
-        .furniture-item {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            background: linear-gradient(45deg, #ffecd2, #fcb69f);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-        
-        .furniture-item:hover {
-            transform: scale(1.1);
-        }
-        
-        .mini-game-card {
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-            border-radius: 16px;
-            padding: 20px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .mini-game-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .achievement-badge {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #ffd700, #ffed4e);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #8b5000;
-        }
-        
-        .weather-widget {
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
-            border-radius: 12px;
-            padding: 16px;
-            color: white;
-            text-align: center;
-        }
-        
-        .pet-mood {
-            font-size: 2rem;
-            animation: moodBounce 1.5s infinite;
-        }
-        
-        @keyframes moodBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        .floating-hearts {
-            position: absolute;
-            color: #ff6b6b;
-            font-size: 1.5rem;
-            animation: floatUp 2s ease-out forwards;
-            pointer-events: none;
-        }
-        
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-50px); }
-        }
-        
-        .experience-bar {
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-        
-        .experience-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            transition: width 0.5s ease;
-        }
-        
-        .coin-animation {
-            animation: coinFlip 0.6s ease;
-        }
-        
-        @keyframes coinFlip {
-            0% { transform: rotateY(0deg); }
-            50% { transform: rotateY(180deg); }
-            100% { transform: rotateY(360deg); }
-        }
-        
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            padding: 12px 20px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        
-        .modal.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            transform: translateY(-20px);
-            transition: transform 0.3s ease;
-        }
-        
-        .modal.show .modal-content {
-            transform: translateY(0);
-        }
-        
-        .breeding-animation {
-            animation: heartPulse 1s infinite;
-        }
-        
-        @keyframes heartPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        
-        .day-night-cycle {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            transition: background 2s ease;
-        }
-        
-        .day {
-            background: linear-gradient(to bottom, #87CEEB, #98FB98);
-        }
-        
-        .night {
-            background: linear-gradient(to bottom, #191970, #4B0082);
-        }
-        
-        .weather-effect {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        
-        .rain {
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><line x1="10" y1="0" x2="5" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/><line x1="30" y1="0" x2="25" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/><line x1="50" y1="0" x2="45" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/><line x1="70" y1="0" x2="65" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/><line x1="90" y1="0" x2="85" y2="20" stroke="blue" stroke-width="1" opacity="0.7"/></svg>') repeat;
-            animation: rainFall 1s linear infinite;
-        }
-        
-        @keyframes rainFall {
-            0% { transform: translateY(-100px); }
-            100% { transform: translateY(100vh); }
-        }
-        
-        .pet-physics {
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        
-        .social-notification {
-            background: linear-gradient(45deg, #ff9a9e, #fecfef);
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin: 4px 0;
-            animation: slideIn 0.5s ease;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .loading-spinner {
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* New styles for improved UI */
-        .input-field {
-            transition: all 0.3s ease;
-            border: 2px solid #e2e8f0;
-        }
-        
-        .input-field:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-secondary:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-        }
-        
-        .form-error {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-        
-        .password-toggle {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #64748b;
-        }
-        
-        .password-container {
-            position: relative;
-        }
-    </style>
-</head>
-<body class="pet-container">
-    <!-- Login Screen -->
-    <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="pet-card w-full max-w-md p-8">
-            <div class="text-center mb-8">
-                <div class="text-6xl mb-4">🐾</div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">PetVerse</h1>
-                <p class="text-gray-600">The Ultimate Virtual Pet Universe</p>
-            </div>
-            
-            <div id="loginForm">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        <i class="fas fa-user mr-2"></i>Username
-                    </label>
-                    <input type="text" id="loginUsername" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 input-field" placeholder="Enter username">
-                    <div id="loginUsernameError" class="form-error"></div>
-                </div>
-                <div class="mb-6 password-container">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        <i class="fas fa-lock mr-2"></i>Password
-                    </label>
-                    <input type="password" id="loginPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 input-field" placeholder="Enter password">
-                    <i class="fas fa-eye password-toggle" id="toggleLoginPassword"></i>
-                    <div id="loginPasswordError" class="form-error"></div>
-                </div>
-                <button onclick="login()" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 mb-4 btn-primary">
-                    <i class="fas fa-sign-in-alt mr-2"></i>Login
-                </button>
-                <button onclick="showRegister()" class="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300 btn-secondary">
-                    Create New Account
-                </button>
-                <div class="text-center mt-4">
-                    <a href="#" onclick="showForgotPassword()" class="text-blue-600 hover:text-blue-800 text-sm">Forgot password?</a>
-                </div>
-            </div>
-            
-            <div id="registerForm" style="display: none;">
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        <i class="fas fa-user mr-2"></i>Username
-                    </label>
-                    <input type="text" id="registerUsername" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 input-field" placeholder="Choose username">
-                    <div id="registerUsernameError" class="form-error"></div>
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        <i class="fas fa-envelope mr-2"></i>Email
-                    </label>
-                    <input type="email" id="registerEmail" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 input-field" placeholder="Enter email">
-                    <div id="registerEmailError" class="form-error"></div>
-                </div>
-                <div class="mb-4 password-container">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        <i class="fas fa-lock mr-2"></i>Password
-                    </label>
-                    <input type="password" id="registerPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 input-field" placeholder="Create password (min 8 chars)">
-                    <i class="fas fa-eye password-toggle" id="toggleRegisterPassword"></i>
-                    <div id="registerPasswordError" class="form-error"></div>
-                </div>
-                <div class="mb-6 password-container">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        <i class="fas fa-lock mr-2"></i>Confirm Password
-                    </label>
-                    <input type="password" id="registerConfirmPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 input-field" placeholder="Confirm password">
-                    <i class="fas fa-eye password-toggle" id="toggleRegisterConfirmPassword"></i>
-                    <div id="registerConfirmPasswordError" class="form-error"></div>
-                </div>
-                <button onclick="register()" class="w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-2 px-4 rounded-lg hover:from-green-600 hover:to-blue-700 transition duration-300 mb-4 btn-primary">
-                    <i class="fas fa-user-plus mr-2"></i>Create Account
-                </button>
-                <button onclick="showLogin()" class="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300 btn-secondary">
-                    Back to Login
-                </button>
-            </div>
-            
-            <div id="forgotPasswordForm" style="display: none;">
-                <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-bold mb-2">
-                        <i class="fas fa-envelope mr-2"></i>Email
-                    </label>
-                    <input type="email" id="forgotPasswordEmail" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500 input-field" placeholder="Enter your email">
-                    <div id="forgotPasswordEmailError" class="form-error"></div>
-                </div>
-                <button onclick="resetPassword()" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition duration-300 mb-4 btn-primary">
-                    <i class="fas fa-key mr-2"></i>Reset Password
-                </button>
-                <button onclick="showLogin()" class="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition duration-300 btn-secondary">
-                    Back to Login
-                </button>
-            </div>
-        </div>
-    </div>
+// Add this code inside your existing <script> tag, replacing the placeholder game functions
 
-    <!-- Main Game Interface -->
-    <div id="gameScreen" style="display: none;" class="min-h-screen">
-        <!-- Day/Night Cycle Background -->
-        <div id="dayNightCycle" class="day-night-cycle day"></div>
-        
-        <!-- Weather Effects -->
-        <div id="weatherEffect" class="weather-effect"></div>
-        
-        <!-- Header -->
-        <header class="relative z-10 p-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <h1 class="text-2xl font-bold">PetVerse</h1>
-                    <div class="weather-widget">
-                        <div id="currentWeather" class="flex items-center space-x-2">
-                            <i class="fas fa-sun"></i>
-                            <span id="weatherText">Sunny</span>
-                            <span id="temperature">72°F</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-coins text-yellow-400"></i>
-                        <span id="userCoins" class="coin-animation">1000</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <i class="fas fa-trophy text-yellow-400"></i>
-                        <span id="userLevel">1</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <img src="https://via.placeholder.com/30" alt="User avatar" class="w-8 h-8 rounded-full">
-                        <span id="usernameDisplay">User</span>
-                    </div>
-                    <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg transition duration-300">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Navigation Tabs -->
-        <nav class="relative z-10 bg-white bg-opacity-90 p-4 shadow-lg">
-            <div class="flex space-x-2 overflow-x-auto">
-                <div class="navigation-tab active" onclick="showSection('home')">
-                    <i class="fas fa-home mr-2"></i>Home
-                </div>
-                <div class="navigation-tab" onclick="showSection('pets')">
-                    <i class="fas fa-paw mr-2"></i>My Pets
-                </div>
-                <div class="navigation-tab" onclick="showSection('house')">
-                    <i class="fas fa-house-user mr-2"></i>Pet House
-                </div>
-                <div class="navigation-tab" onclick="showSection('explore')">
-                    <i class="fas fa-map mr-2"></i>Explore
-                </div>
-                <div class="navigation-tab" onclick="showSection('games')">
-                    <i class="fas fa-gamepad mr-2"></i>Mini Games
-                </div>
-                <div class="navigation-tab" onclick="showSection('social')">
-                    <i class="fas fa-users mr-2"></i>Social
-                </div>
-                <div class="navigation-tab" onclick="showSection('shop')">
-                    <i class="fas fa-shopping-cart mr-2"></i>Shop
-                </div>
-                <div class="navigation-tab" onclick="showSection('achievements')">
-                    <i class="fas fa-trophy mr-2"></i>Achievements
-                </div>
-                <div class="navigation-tab" onclick="showSection('breeding')">
-                    <i class="fas fa-heart mr-2"></i>Breeding
-                </div>
-                <div class="navigation-tab" onclick="showSection('stats')">
-                    <i class="fas fa-chart-bar mr-2"></i>Statistics
-                </div>
-            </div>
-        </nav>
-
-        <!-- Main Content Container -->
-        <main class="relative z-10 p-4">
-            <!-- Home Section -->
-            <div id="homeSection" class="section">
-                <!-- Content remains the same as original -->
-            </div>
-
-            <!-- Other sections (pets, house, explore, etc.) remain the same as original -->
-            
-        </main>
-    </div>
-
-    <!-- Notifications -->
-    <div id="notification" class="notification"></div>
-
-    <!-- Modals -->
-    <div id="modalOverlay" class="modal">
-        <div class="modal-content">
-            <div id="modalContent">
-                <!-- Modal content will be dynamically generated -->
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Enhanced Game State with Local Storage
-        let gameState = {
-            user: null,
-            currentPet: {
-                id: 'pet1',
-                name: "Whiskers",
-                type: "cat",
-                emoji: "🐱",
-                age: 3,
-                level: 1,
-                experience: 150,
-                maxExperience: 200,
-                health: 85,
-                hunger: 60,
-                happiness: 75,
-                energy: 90,
-                cleanliness: 70,
-                mood: "happy",
-                traits: ["playful", "curious"],
-                lastFed: Date.now() - 2 * 60 * 60 * 1000,
-                lastPlayed: Date.now() - 1 * 60 * 60 * 1000,
-                lastCleaned: Date.now() - 4 * 60 * 60 * 1000,
-                lastSlept: Date.now() - 8 * 60 * 60 * 1000
-            },
-            pets: [],
-            coins: 1000,
+// Initialize game
+function initializeGame() {
+    // Set up initial pet if none exists
+    if (!gameState.currentPet && gameState.pets.length > 0) {
+        gameState.currentPet = gameState.pets[0];
+    } else if (!gameState.currentPet) {
+        // Create default pet if none exists
+        gameState.currentPet = {
+            id: 'pet_' + Date.now(),
+            name: "Whiskers",
+            type: "cat",
+            emoji: "🐱",
+            age: 3,
             level: 1,
-            achievements: [],
-            inventory: {
-                food: ['kibble', 'treats', 'premium_food'],
-                toys: ['ball', 'rope', 'mouse_toy'],
-                accessories: ['collar', 'hat'],
-                furniture: ['bed', 'food_bowl', 'toy_box']
-            },
-            house: {
-                bedroom: {},
-                kitchen: {},
-                garden: {},
-                playroom: {}
-            },
-            friends: [],
-            currentRoom: 'playroom',
-            timeOfDay: 'day',
-            weather: 'sunny',
-            lastSave: Date.now()
+            experience: 150,
+            maxExperience: 200,
+            health: 85,
+            hunger: 60,
+            happiness: 75,
+            energy: 90,
+            cleanliness: 70,
+            mood: "happy",
+            traits: ["playful", "curious"],
+            lastFed: Date.now() - 2 * 60 * 60 * 1000,
+            lastPlayed: Date.now() - 1 * 60 * 60 * 1000,
+            lastCleaned: Date.now() - 4 * 60 * 60 * 1000,
+            lastSlept: Date.now() - 8 * 60 * 60 * 1000
         };
+        gameState.pets.push(gameState.currentPet);
+    }
+    
+    updateUI();
+}
 
-        // Initialize game
-        document.addEventListener('DOMContentLoaded', function() {
-            // Setup password toggle
-            setupPasswordToggles();
-            
-            // Check for saved game state
-            loadGameState();
-            
-            // Initialize game
-            initializeGame();
-            startGameLoop();
-            initializeCharts();
-        });
+// Pet care functions
+function feedPet() {
+    if (gameState.currentPet.hunger < 100) {
+        gameState.currentPet.hunger = Math.min(100, gameState.currentPet.hunger + 25);
+        gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 10);
+        gameState.currentPet.lastFed = Date.now();
+        gainExperience(5);
+        showFloatingHearts();
+        showNotification(gameState.currentPet.name + ' enjoyed the meal!', 'success');
+        updatePetMood();
+        updateUI();
+        saveGameState();
+    } else {
+        showNotification(gameState.currentPet.name + ' is not hungry right now', 'info');
+    }
+}
 
-        // Password toggle functionality
-        function setupPasswordToggles() {
-            const toggleLogin = document.getElementById('toggleLoginPassword');
-            const toggleRegister = document.getElementById('toggleRegisterPassword');
-            const toggleConfirm = document.getElementById('toggleRegisterConfirmPassword');
-            
-            if (toggleLogin) {
-                toggleLogin.addEventListener('click', function() {
-                    togglePasswordVisibility('loginPassword', toggleLogin);
-                });
-            }
-            
-            if (toggleRegister) {
-                toggleRegister.addEventListener('click', function() {
-                    togglePasswordVisibility('registerPassword', toggleRegister);
-                });
-            }
-            
-            if (toggleConfirm) {
-                toggleConfirm.addEventListener('click', function() {
-                    togglePasswordVisibility('registerConfirmPassword', toggleConfirm);
-                });
-            }
-        }
-        
-        function togglePasswordVisibility(inputId, toggleIcon) {
-            const input = document.getElementById(inputId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                input.type = 'password';
-                toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        }
+function playWithPet() {
+    if (gameState.currentPet.energy > 20) {
+        gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 20);
+        gameState.currentPet.energy = Math.max(0, gameState.currentPet.energy - 20);
+        gameState.currentPet.lastPlayed = Date.now();
+        gainExperience(10);
+        showFloatingHearts();
+        showNotification(gameState.currentPet.name + ' had a great time playing!', 'success');
+        updatePetMood();
+        updateUI();
+        saveGameState();
+    } else {
+        showNotification(gameState.currentPet.name + ' is too tired to play', 'info');
+    }
+}
 
-        // Enhanced Authentication functions
-        function validateEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(String(email).toLowerCase());
-        }
-        
-        function validatePassword(password) {
-            return password.length >= 8;
-        }
-        
-        function validateUsername(username) {
-            return username.length >= 3 && username.length <= 20;
-        }
+function cleanPet() {
+    if (gameState.currentPet.cleanliness < 100) {
+        gameState.currentPet.cleanliness = Math.min(100, gameState.currentPet.cleanliness + 30);
+        gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 5);
+        gameState.currentPet.lastCleaned = Date.now();
+        gainExperience(5);
+        showNotification(gameState.currentPet.name + ' feels fresh and clean!', 'success');
+        updatePetMood();
+        updateUI();
+        saveGameState();
+    } else {
+        showNotification(gameState.currentPet.name + ' is already clean', 'info');
+    }
+}
 
-        function showLogin() {
-            clearFormErrors();
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('forgotPasswordForm').style.display = 'none';
-        }
+function sleepPet() {
+    if (gameState.currentPet.energy < 100) {
+        gameState.currentPet.energy = Math.min(100, gameState.currentPet.energy + 40);
+        gameState.currentPet.lastSlept = Date.now();
+        showNotification(gameState.currentPet.name + ' had a good nap!', 'success');
+        updatePetMood();
+        updateUI();
+        saveGameState();
+    } else {
+        showNotification(gameState.currentPet.name + ' is not tired right now', 'info');
+    }
+}
 
-        function showRegister() {
-            clearFormErrors();
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'block';
-            document.getElementById('forgotPasswordForm').style.display = 'none';
-        }
-        
-        function showForgotPassword() {
-            clearFormErrors();
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('registerForm').style.display = 'none';
-            document.getElementById('forgotPasswordForm').style.display = 'block';
-        }
-        
-        function clearFormErrors() {
-            document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
-        }
+function takeToVet() {
+    if (gameState.coins >= 50) {
+        gameState.coins -= 50;
+        gameState.currentPet.health = 100;
+        showNotification('Veterinary visit complete! ' + gameState.currentPet.name + ' is in perfect health!', 'success');
+        updateUI();
+        saveGameState();
+    } else {
+        showNotification('You need 50 coins for a vet visit', 'error');
+    }
+}
 
-        function login() {
-            clearFormErrors();
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            
-            let isValid = true;
-            
-            if (!username) {
-                document.getElementById('loginUsernameError').textContent = 'Username is required';
-                isValid = false;
-            }
-            
-            if (!password) {
-                document.getElementById('loginPasswordError').textContent = 'Password is required';
-                isValid = false;
-            }
-            
-            if (!isValid) return;
-            
-            // Simulate API call
-            setTimeout(() => {
-                const savedUser = localStorage.getItem('petverse_user_' + username.toLowerCase());
-                
-                if (savedUser) {
-                    const user = JSON.parse(savedUser);
-                    
-                    // In a real app, you would hash and compare passwords properly
-                    if (user.password === password) {
-                        gameState.user = {
-                            username: user.username,
-                            email: user.email,
-                            coins: user.coins || 1000,
-                            level: user.level || 1,
-                            avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random`
-                        };
-                        
-                        // Load user's pets if available
-                        const savedPets = localStorage.getItem('petverse_pets_' + username.toLowerCase());
-                        if (savedPets) {
-                            gameState.pets = JSON.parse(savedPets);
-                            if (gameState.pets.length > 0) {
-                                gameState.currentPet = gameState.pets[0];
-                            }
-                        }
-                        
-                        saveGameState();
-                        showGameScreen();
-                        showNotification('Welcome back, ' + username + '!', 'success');
-                    } else {
-                        document.getElementById('loginPasswordError').textContent = 'Invalid password';
-                    }
-                } else {
-                    document.getElementById('loginUsernameError').textContent = 'User not found';
-                }
-            }, 500);
-        }
+// Game mechanics
+function gainExperience(amount) {
+    gameState.currentPet.experience += amount;
+    if (gameState.currentPet.experience >= gameState.currentPet.maxExperience) {
+        levelUp();
+    }
+    updateUI();
+}
 
-        function register() {
-            clearFormErrors();
-            const username = document.getElementById('registerUsername').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            
-            let isValid = true;
-            
-            if (!validateUsername(username)) {
-                document.getElementById('registerUsernameError').textContent = 'Username must be 3-20 characters';
-                isValid = false;
-            }
-            
-            if (!validateEmail(email)) {
-                document.getElementById('registerEmailError').textContent = 'Please enter a valid email';
-                isValid = false;
-            }
-            
-            if (!validatePassword(password)) {
-                document.getElementById('registerPasswordError').textContent = 'Password must be at least 8 characters';
-                isValid = false;
-            }
-            
-            if (password !== confirmPassword) {
-                document.getElementById('registerConfirmPasswordError').textContent = 'Passwords do not match';
-                isValid = false;
-            }
-            
-            if (!isValid) return;
-            
-            // Check if username already exists
-            if (localStorage.getItem('petverse_user_' + username.toLowerCase())) {
-                document.getElementById('registerUsernameError').textContent = 'Username already taken';
-                return;
-            }
-            
-            // Create user object (in a real app, you would hash the password)
-            const user = {
-                username,
-                email,
-                password, // In production, NEVER store plain text passwords!
-                coins: 1000,
-                level: 1,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Save user to localStorage
-            localStorage.setItem('petverse_user_' + username.toLowerCase(), JSON.stringify(user));
-            
-            // Set up game state
-            gameState.user = {
-                username,
-                email,
-                coins: 1000,
-                level: 1,
-                avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random`
-            };
-            
-            // Create first pet
-            const newPet = {
-                id: 'pet_' + Date.now(),
-                name: "Whiskers",
-                type: "cat",
-                emoji: "🐱",
-                age: 1,
-                level: 1,
-                experience: 0,
-                maxExperience: 100,
-                health: 100,
-                hunger: 80,
-                happiness: 80,
-                energy: 100,
-                cleanliness: 90,
-                mood: "happy",
-                traits: ["playful"],
-                lastFed: Date.now(),
-                lastPlayed: Date.now(),
-                lastCleaned: Date.now(),
-                lastSlept: Date.now()
-            };
-            
-            gameState.pets = [newPet];
-            gameState.currentPet = newPet;
-            
-            // Save pets
-            localStorage.setItem('petverse_pets_' + username.toLowerCase(), JSON.stringify(gameState.pets));
-            
-            saveGameState();
-            showGameScreen();
-            showNotification('Account created successfully! Welcome to PetVerse!', 'success');
-        }
-        
-        function resetPassword() {
-            clearFormErrors();
-            const email = document.getElementById('forgotPasswordEmail').value.trim();
-            
-            if (!validateEmail(email)) {
-                document.getElementById('forgotPasswordEmailError').textContent = 'Please enter a valid email';
-                return;
-            }
-            
-            // In a real app, you would send a password reset email
-            showNotification('Password reset link sent to your email (simulated)', 'success');
-            showLogin();
-        }
+function levelUp() {
+    gameState.currentPet.level++;
+    gameState.currentPet.experience = 0;
+    gameState.currentPet.maxExperience = gameState.currentPet.level * 100;
+    gameState.coins += gameState.currentPet.level * 50;
+    showNotification(gameState.currentPet.name + ' leveled up! Level ' + gameState.currentPet.level, 'success');
+    updateUI();
+    saveGameState();
+}
 
-        function logout() {
-            // Save game state before logging out
-            saveGameState();
-            
-            // Reset game state
-            gameState.user = null;
-            gameState.pets = [];
-            gameState.currentPet = null;
-            
-            showLoginScreen();
-            showNotification('Logged out successfully', 'info');
-        }
-        
-        function saveGameState() {
-            if (gameState.user) {
-                // Save user data
-                const userData = {
-                    ...gameState.user,
-                    coins: gameState.coins,
-                    level: gameState.level,
-                    lastSave: Date.now()
-                };
-                
-                localStorage.setItem('petverse_user_' + gameState.user.username.toLowerCase(), JSON.stringify(userData));
-                
-                // Save pets
-                if (gameState.pets.length > 0) {
-                    localStorage.setItem('petverse_pets_' + gameState.user.username.toLowerCase(), JSON.stringify(gameState.pets));
-                }
-                
-                // Save other game state
-                const gameData = {
-                    inventory: gameState.inventory,
-                    house: gameState.house,
-                    friends: gameState.friends
-                };
-                
-                localStorage.setItem('petverse_game_' + gameState.user.username.toLowerCase(), JSON.stringify(gameData));
-            }
-        }
-        
-        function loadGameState() {
-            const savedUser = localStorage.getItem('petverse_user');
-            if (savedUser) {
-                const user = JSON.parse(savedUser);
-                
-                // Check if we have a more recent save for this user
-                const userSpecificData = localStorage.getItem('petverse_user_' + user.username.toLowerCase());
-                if (userSpecificData) {
-                    const fullUserData = JSON.parse(userSpecificData);
-                    gameState.user = fullUserData;
-                    gameState.coins = fullUserData.coins || 1000;
-                    gameState.level = fullUserData.level || 1;
-                    
-                    // Load pets
-                    const savedPets = localStorage.getItem('petverse_pets_' + user.username.toLowerCase());
-                    if (savedPets) {
-                        gameState.pets = JSON.parse(savedPets);
-                        if (gameState.pets.length > 0) {
-                            gameState.currentPet = gameState.pets[0];
-                        }
-                    }
-                    
-                    // Load other game data
-                    const gameData = localStorage.getItem('petverse_game_' + user.username.toLowerCase());
-                    if (gameData) {
-                        const parsedData = JSON.parse(gameData);
-                        gameState.inventory = parsedData.inventory || gameState.inventory;
-                        gameState.house = parsedData.house || gameState.house;
-                        gameState.friends = parsedData.friends || gameState.friends;
-                    }
-                    
-                    showGameScreen();
-                    return;
-                }
-                
-                // Fallback to old save system
-                gameState.user = user;
-                showGameScreen();
-            } else {
-                showLoginScreen();
-            }
-        }
+function updatePetMood() {
+    const avg = (gameState.currentPet.health + gameState.currentPet.hunger + 
+                gameState.currentPet.happiness + gameState.currentPet.energy + 
+                gameState.currentPet.cleanliness) / 5;
+    
+    if (avg >= 80) {
+        gameState.currentPet.mood = 'happy';
+        document.getElementById('currentPetMood').textContent = '😊';
+    } else if (avg >= 60) {
+        gameState.currentPet.mood = 'neutral';
+        document.getElementById('currentPetMood').textContent = '😐';
+    } else if (avg >= 40) {
+        gameState.currentPet.mood = 'sad';
+        document.getElementById('currentPetMood').textContent = '😢';
+    } else {
+        gameState.currentPet.mood = 'sick';
+        document.getElementById('currentPetMood').textContent = '😷';
+    }
+}
 
-        function showLoginScreen() {
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('gameScreen').style.display = 'none';
+function showFloatingHearts() {
+    const avatar = document.getElementById('currentPetAvatar');
+    const hearts = document.createElement('div');
+    hearts.className = 'floating-hearts';
+    hearts.textContent = '💕';
+    hearts.style.position = 'absolute';
+    hearts.style.left = Math.random() * 100 + 'px';
+    hearts.style.top = Math.random() * 100 + 'px';
+    avatar.appendChild(hearts);
+    
+    setTimeout(() => {
+        if (hearts.parentNode) {
+            hearts.parentNode.removeChild(hearts);
         }
+    }, 2000);
+}
 
-        function showGameScreen() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'block';
-            
-            // Update user display
-            if (gameState.user) {
-                document.getElementById('usernameDisplay').textContent = gameState.user.username;
-                if (gameState.user.avatar) {
-                    document.querySelector('header img').src = gameState.user.avatar;
-                }
-            }
-            
-            updateUI();
-        }
-        
-        function showModal(content) {
-            document.getElementById('modalContent').innerHTML = content;
-            document.getElementById('modalOverlay').classList.add('show');
-        }
-        
-        function closeModal() {
-            document.getElementById('modalOverlay').classList.remove('show');
-        }
+// UI update functions
+function updateUI() {
+    if (!gameState.currentPet) return;
+    
+    // Update pet display
+    document.getElementById('currentPetName').textContent = gameState.currentPet.name;
+    document.getElementById('currentPetAvatar').textContent = gameState.currentPet.emoji;
+    document.getElementById('currentPetAge').textContent = 'Age: ' + gameState.currentPet.age + ' months';
+    
+    // Update status bars
+    updateStatusBar('health', gameState.currentPet.health);
+    updateStatusBar('hunger', gameState.currentPet.hunger);
+    updateStatusBar('happiness', gameState.currentPet.happiness);
+    updateStatusBar('energy', gameState.currentPet.energy);
+    updateStatusBar('cleanliness', gameState.currentPet.cleanliness);
+    
+    // Update experience
+    const expPercent = (gameState.currentPet.experience / gameState.currentPet.maxExperience) * 100;
+    document.getElementById('experienceBar').style.width = expPercent + '%';
+    document.getElementById('experienceValue').textContent = 
+        gameState.currentPet.experience + '/' + gameState.currentPet.maxExperience;
+    
+    // Update user stats
+    document.getElementById('userCoins').textContent = gameState.coins;
+    document.getElementById('userLevel').textContent = gameState.currentPet.level;
+}
 
-        // The rest of your game functions (navigation, pet care, etc.) would go here
-        // They would be similar to your original code but with enhanced state management
-        
-        // Example of enhanced pet care function with auto-save
-        function feedPet() {
-            if (gameState.currentPet.hunger < 100) {
-                gameState.currentPet.hunger = Math.min(100, gameState.currentPet.hunger + 25);
-                gameState.currentPet.happiness = Math.min(100, gameState.currentPet.happiness + 10);
-                gameState.currentPet.lastFed = Date.now();
-                gainExperience(5);
-                showFloatingHearts();
-                showNotification(gameState.currentPet.name + ' enjoyed the meal!', 'success');
-                updatePetMood();
-                updateUI();
-                
-                // Auto-save after important actions
-                saveGameState();
-            } else {
-                showNotification(gameState.currentPet.name + ' is not hungry right now', 'info');
-            }
-        }
-        
-        // Initialize charts
-        function initializeCharts() {
-            // Your chart initialization code
-        }
-        
-        // Game loop
-        function startGameLoop() {
-            setInterval(() => {
-                updatePetNeeds();
-                updateTimeAndWeather();
-                
-                // Auto-save every 5 minutes
-                if (Date.now() - gameState.lastSave > 5 * 60 * 1000) {
-                    saveGameState();
-                    gameState.lastSave = Date.now();
-                }
-            }, 60000); // Update every minute
-        }
-        
-        // Event listeners for modal
-        document.getElementById('modalOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-    </script>
-</body>
-</html>
+function updateStatusBar(stat, value) {
+    const bar = document.getElementById(stat + 'Bar');
+    const valueSpan = document.getElementById(stat + 'Value');
+    if (bar && valueSpan) {
+        bar.style.width = value + '%';
+        valueSpan.textContent = value + '/100';
+    }
+}
+
+// Navigation functions
+function showSection(sectionName) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(section => section.style.display = 'none');
+    
+    // Show selected section
+    const sectionToShow = document.getElementById(sectionName + 'Section');
+    if (sectionToShow) {
+        sectionToShow.style.display = 'block';
+    }
+    
+    // Update navigation tabs
+    const tabs = document.querySelectorAll('.navigation-tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Load section-specific content
+    switch(sectionName) {
+        case 'pets':
+            loadPetCollection();
+            break;
+        case 'house':
+            loadHouseDesigner();
+            break;
+        case 'shop':
+            loadShop();
+            break;
+        case 'stats':
+            updateCharts();
+            break;
+    }
+}
+
+// Initialize button event listeners
+function setupButtonListeners() {
+    // Quick Actions
+    document.querySelectorAll('[onclick="feedPet()"]').forEach(btn => {
+        btn.onclick = feedPet;
+    });
+    document.querySelectorAll('[onclick="playWithPet()"]').forEach(btn => {
+        btn.onclick = playWithPet;
+    });
+    document.querySelectorAll('[onclick="cleanPet()"]').forEach(btn => {
+        btn.onclick = cleanPet;
+    });
+    document.querySelectorAll('[onclick="sleepPet()"]').forEach(btn => {
+        btn.onclick = sleepPet;
+    });
+    document.querySelectorAll('[onclick="takeToVet()"]').forEach(btn => {
+        btn.onclick = takeToVet;
+    });
+    
+    // Navigation tabs
+    document.querySelectorAll('.navigation-tab').forEach(tab => {
+        const section = tab.getAttribute('data-section') || 
+                       tab.textContent.trim().toLowerCase().replace(' ', '');
+        tab.onclick = () => showSection(section);
+    });
+    
+    // Other buttons
+    document.querySelectorAll('[onclick="logout()"]').forEach(btn => {
+        btn.onclick = logout;
+    });
+}
+
+// Game loop for time-based mechanics
+function startGameLoop() {
+    setInterval(() => {
+        updatePetNeeds();
+        updateTimeAndWeather();
+    }, 60000); // Update every minute
+}
+
+function updatePetNeeds() {
+    const now = Date.now();
+    const hoursPassed = {
+        feed: (now - gameState.currentPet.lastFed) / (1000 * 60 * 60),
+        play: (now - gameState.currentPet.lastPlayed) / (1000 * 60 * 60),
+        clean: (now - gameState.currentPet.lastCleaned) / (1000 * 60 * 60),
+        sleep: (now - gameState.currentPet.lastSlept) / (1000 * 60 * 60)
+    };
+    
+    // Decrease stats over time
+    if (hoursPassed.feed > 1) {
+        gameState.currentPet.hunger = Math.max(0, gameState.currentPet.hunger - 5);
+    }
+    if (hoursPassed.clean > 2) {
+        gameState.currentPet.cleanliness = Math.max(0, gameState.currentPet.cleanliness - 3);
+    }
+    if (hoursPassed.sleep > 6) {
+        gameState.currentPet.energy = Math.max(0, gameState.currentPet.energy - 10);
+    }
+    if (hoursPassed.play > 3) {
+        gameState.currentPet.happiness = Math.max(0, gameState.currentPet.happiness - 8);
+    }
+    
+    updatePetMood();
+    updateUI();
+}
+
+function updateTimeAndWeather() {
+    const hour = new Date().getHours();
+    const dayNightCycle = document.getElementById('dayNightCycle');
+    
+    if (hour >= 6 && hour < 18) {
+        gameState.timeOfDay = 'day';
+        dayNightCycle.className = 'day-night-cycle day';
+    } else {
+        gameState.timeOfDay = 'night';
+        dayNightCycle.className = 'day-night-cycle night';
+    }
+    
+    // Random weather changes
+    if (Math.random() < 0.1) {
+        const weathers = ['sunny', 'cloudy', 'rainy', 'snowy'];
+        gameState.weather = weathers[Math.floor(Math.random() * weathers.length)];
+        updateWeatherDisplay();
+    }
+}
+
+function updateWeatherDisplay() {
+    const weatherText = document.getElementById('weatherText');
+    const weatherIcon = document.querySelector('#currentWeather i');
+    const weatherEffect = document.getElementById('weatherEffect');
+    
+    switch(gameState.weather) {
+        case 'sunny':
+            weatherText.textContent = 'Sunny';
+            weatherIcon.className = 'fas fa-sun';
+            weatherEffect.className = 'weather-effect';
+            break;
+        case 'cloudy':
+            weatherText.textContent = 'Cloudy';
+            weatherIcon.className = 'fas fa-cloud';
+            weatherEffect.className = 'weather-effect';
+            break;
+        case 'rainy':
+            weatherText.textContent = 'Rainy';
+            weatherIcon.className = 'fas fa-cloud-rain';
+            weatherEffect.className = 'weather-effect rain';
+            break;
+        case 'snowy':
+            weatherText.textContent = 'Snowy';
+            weatherIcon.className = 'fas fa-snowflake';
+            weatherEffect.className = 'weather-effect';
+            break;
+    }
+}
+
+// Initialize the game when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup password toggle
+    setupPasswordToggles();
+    
+    // Check for saved game state
+    loadGameState();
+    
+    // Initialize game
+    initializeGame();
+    setupButtonListeners();
+    startGameLoop();
+    initializeCharts();
+});
